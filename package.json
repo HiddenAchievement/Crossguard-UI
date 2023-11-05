@@ -1,0 +1,26 @@
+{
+  "name": "com.hiddenachievement.crossguardui",
+  "displayName": "Crossguard UI",
+  "version": "1.0.3",
+  "unity": "2019.4",
+  "keywords": [
+    "UI",
+    "ugui",
+    "Crossguard",
+    "Selectable",
+    "tween",
+    "transitions",
+    "cross-platform"
+  ],
+  "description": "Crossguard UI provides a more robust and cross-platform friendly transition system for UGUI, as well as a few additional UI elements that use these systems.",
+  "dependencies": {
+    "com.unity.ugui": "1.0.0",
+    "com.unity.textmeshpro": "2.0.1"
+  },
+  "author": {
+    "name": "Hidden Achievement",
+    "email": "support@hiddenachievement.com",
+    "url": "https://hiddenachievement.com"
+  },
+  "type": "library"
+}

@@ -1,0 +1,56 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d6236f2f461559f41935c72c6944e626, type: 3}
+  m_Name: Spinner Button Style
+  m_EditorClassIdentifier: 
+  TransitionTime: 0.1
+  NormalState:
+  - ComponentPath: 
+    UseColor: 1
+    Color: {r: 1, g: 0.9254902, b: 0.81960785, a: 1}
+    UseAlpha: 0
+    Alpha: 0
+    UseScale: 1
+    Scale: {x: 1, y: 1}
+  HighlightedState:
+  - ComponentPath: 
+    UseColor: 1
+    Color: {r: 1, g: 0.8895351, b: 0, a: 1}
+    UseAlpha: 0
+    Alpha: 0
+    UseScale: 1
+    Scale: {x: 1.1, y: 1.1}
+  SelectedState: []
+  IsolatedState:
+  - ComponentPath: 
+    UseColor: 1
+    Color: {r: 0.5531254, g: 0.7735849, b: 0.24448201, a: 1}
+    UseAlpha: 0
+    Alpha: 0
+    UseScale: 0
+    Scale: {x: 0, y: 0}
+  PressedState:
+  - ComponentPath: 
+    UseColor: 1
+    Color: {r: 0.915, g: 0.74725, b: 0, a: 1}
+    UseAlpha: 0
+    Alpha: 0
+    UseScale: 1
+    Scale: {x: 0.9, y: 0.9}
+  DisabledState:
+  - ComponentPath: 
+    UseColor: 1
+    Color: {r: 0.5, g: 0.5, b: 0.5, a: 1}
+    UseAlpha: 0
+    Alpha: 0
+    UseScale: 0
+    Scale: {x: 0, y: 0}

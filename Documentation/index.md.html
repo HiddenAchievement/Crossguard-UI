@@ -1,0 +1,800 @@
+<meta charset="utf-8" lang="en"><style class="fallback">body{visibility:hidden;}</style>
+
+**Crossguard UI**
+_UGUI Improved_
+
+Crossguard UI is a Unity package that provides a variety of improvements to
+Unity's stock UGUI behavior.
+
+# Getting Started
+
+Most of Crossguard UI works right out of the box, but there are a few things
+you'll need to do to get the most out of it.
+
+
+## Get the Package
+
+You will need the Crossguard UI package available in your Unity project.  Right
+now, the best way to do this is to place the project inside  of the `Packages`
+folder inside your project root (one left up from your `Assets` folder).
+Whether provided by subrepository or copy,  it should reside in a folder
+called `com.hiddenachievement.crossguardui`.
+
+## Prepare Your Project
+
+If you are using Unity's new Input System package or Rewired, you should add UI
+events for `PrevField` and `NextField`.  These are for tabbing between form
+fields. They should generally not be remapped, at this time, because the Tab
+handling for Input Fields is currently hard-coded, due to some limitations in
+the input handling inside Unity's Input Field code.
+
+### Preparing a Scene
+
+If you are using either Unity's Legacy Input or Unity's new Input System
+package, you should include a `Crossguard Input Adapter` in your scene.  This
+doesn't need to be anywhere special:  It can go on any object that will be
+present for the lifetime of the scene, such as a Scene Manager object.  This
+object makes the `IPrevFieldHandler`, `INextFieldHandler`, and
+`IMoveEndHandler` events work.
+
+If you are using Rewired, you may need to write your own replacement for
+`Crossguard Input Adapter` that can execute these same three events.
+
+### Crossguard's UI Elements
+
+To use a Crossguard UI [element](#uielements), you'll either want to use the
+`GameObject > UI > Crossguard UI` menu (or the scene hierarchy context menu) to
+create a fully-constructed object, or you'll want to build it from, scratch,
+using the respective component.  Every Crossguard UI element requires a
+[Transitioner](#transitioners), which dictates the visual behavior of state
+transitions.  If you are building your element from scratch, you'll need to add
+this component manually, since Crossguard does not know which one you want to
+use.
+
+Elements that can be controlled by axis controls (such as sliders and spinners)
+also require an `Axis Control Helper` component, but this should automatically
+be added, when your component is.
+
+### Color and Scale Styles
+
+If you're using a `Color And Scale Transitioner`, you need to make styles for
+your elements.  To do this, go to `Assets > Create > Crossguard UI > Color and
+Scale Style` (or use the project hierarchy context menu).  To learn more about
+how to configure these, see the [Color and Scale Style](#colorandscalestyle)
+part of the Transitioners section.
+
+You can assign your new style to the `Style` field on the `Color And Scale
+Transitioner` component.
+
+The elements created from the `GameObject` menu use styles from the
+`Content/Default Styles` folder inside of this package.  These are well-formed
+examples, but you probably shouldn't use them in production.
+
+### Controller Prompts (Optional)
+
+If you intend to use Controller Prompts, you'll need a little additional
+integration that isn't provided by Crossguard.  Specifically, you will need to
+create a Token Provider and an Action Relay, compatible with whatever input
+system you're using.  The test project includes `QuickAndDirtyTokenProvider.cs`
+and `ControllerPromptActionTracker.cs` as examples for how to do these
+integrations.  You can find more information on this in the
+Gamepad Prompts section.
+
+## Regression Test Changes
+
+The `Crossguard UI Test` project is handy for regression-testing Crossguard
+features.
+
+
+# State System
+
+Crossguard UI features a new, more sophisticated UI element state system.  The
+biggest change is that the states are **not mutually-exclusive**. An element
+can, for instance, be Selected, and if you mouse over it, it will _also_ be
+Highlighted, at the same time.
+
+## The States
+
+The new states are as follows:
+
+* Normal
+* Highlighted
+* Selected
+* Pressed
+* Isolated
+* Disabled
+
+## Order of Precedence
+
+While the states may be mutually exclusive, two different states sometimes need
+to alter the same properties on the same elements.  Because of this, the above
+order of the states is important.  In most of the
+[Transitioners](#transitioners) provided in this package, states lower in the
+list will typically take precedence over states that are higher in the list.
+For instance, if you're using the Color and Scale Transitioner, and your
+`Disabled` state turns a button background gray, the `Highlighted` state cannot
+change it to a different color, while the button is disabled.  When a state is
+turned off, all of the elements that it modified will rise back up the list to
+the first active state that has modifications for them.
+
+## The Isolated State
+
+Most of the above states serve the same purpose that they do in Unity, but
+there is one new state that works a bit differently from the others.  The
+Isolated state is intended to indicate situations where navigation has been
+temporarily isolated to a given UI element.  The specific use-cases are as
+follows:
+
+### Isolating Axis Elements
+
+One classic problem with using Gamepad or keyboard axis navigation in a UI
+system is that certain elements, such as sliders and spinners, _also_ seem as
+though they should be controlled using axis controls.  In Crossguard, if there
+are navigation elements that are along the same axis as one of these elements
+(or if you turn on `Always Require Isolation`), these elements require a
+`Submit` button press to activate them, before they can be driven using your
+axis controls.  When the element is activated, the `Isolated` state becomes
+active.
+
+Additionally, axis components have optional increment and decrement buttons
+that can be assigned to them.  If these buttons are present, then these
+buttons will _also_ enter the `1solated` state when the axis element does.
+This helps illuminate the fact that these buttons are being driven by the axis
+controls, at this point.
+
+### Isolating Input Fields
+
+Input fields use their `Isolated` state when they enter edit mode.  This
+visually distinguishes them from when they are merely selected.  This is
+especially handy when using Gamepad controls, since the controls do not go
+immediately into edit mode when selected by the controller.
+
+
+# UI Elements
+
+Crossguard UI includes both enhanced versions of Unity's stock UGUI elements,
+and some additional elements that aren't normally available in UGUI.
+
+## Standard Elements
+
+These are CrossGuard adaptations of existing UGUI elements.
+
+### CrossSelectable
+
+CrossSelectable is a child class of Selectable.  It can be used as a base class
+for new elements that work with Crossguard Transitioners, or it can be used
+as a component, just as it is.
+
+### CrossButton
+
+CrossButton is a child class of UGUI's Button.  It has been modified to work
+with Crossguard Transitioners.  It also supports some special behavior, when
+used as Increment/Decrement buttons for Axis Controls (which will be discussed
+below).
+
+### CrossToggle
+
+CrossToggle is **not** a child class of UGUI's Toggle.  It had to be rewritten
+to work with Crossguard's [Toggle Groups](#togglegroups).  Unlike
+traditional Toggles, CrossToggles can be assigned an arbitrary ID, for internal
+use.  It also has an additional value changed callback that can be used when
+you want to know which toggle was fired.
+
+### CrossSlider
+
+CrossSlider is a child class of UGUI's Slider.  It has been modified to work
+with Crossguard Transitioners, and it's also an [Axis Control](#axiscontrols).
+
+### CrossDropdown
+
+CrossDropdown is **not** a child of UGUI's Dropdown or `TMP_Dropdown`.  It has
+been rewritten to work with CrossToggle, CrossScrollbar and Crossguard
+Transitioners.
+
+### CrossInputField
+
+CrossInputField is a child of `TMP_InputField`.  However, it has been modified
+to work with Crossguard Transitioners, field-tabbing, and one more very
+important feature:
+
+When using axis-navigation (such as with a Gamepad), it requires a `Submit`
+press to activate text input.  This will turn on the `Isolation` state, which
+should give the element a different appearance, so you can clearly see when the
+field has become editable.
+
+### CrossScrollbar
+
+CrossScrollbar is a child of UGUI's Scrollbar.  It has been modified to work
+with Crossguard Transitioners, but it's also an [Axis Control](#axiscontrols).
+
+## Extended Elements
+
+These are frequently-used elements that have been added to the collection.
+
+### CrossSlideToggle
+
+![](images/slide_toggle.png)
+
+This is a standard slide-toggle, which slides a handle to the left or right,
+depending on whether the Toggle is off or on, respectively.
+
+### CrossIconToggle
+
+![](images/icon_toggle.png)
+
+This toggle displays different images when it is on and off.
+
+### CrossTextToggle
+
+This toggle displays different text when it is on and off.
+
+### CrossIconSpinner
+
+![](images/icon_spinner.png)
+
+The icon spinner allows you to select from an array of images.  This is an
+[Axis Control](#axiscontrols).
+
+### CrossNumberSpinner
+
+![](images/number_spinner.png)
+
+The number spinner lets you pick an integer from a range.  This is an
+[Axis Control](#axiscontrols).
+
+### CrossTextSpinner
+
+![](images/text_spinner.png)
+
+The text spinner lets you pick a string from a list of strings.  (This can be
+used as a more console-friendly alternative to a dropdown.)  This is an
+[Axis Control](#axiscontrols).
+
+## Adding New Elements
+
+Apart from `CrossSelectable`, there are a few other base classes available
+
+### CrossToggleBase
+
+If you want to make a new Toggle type, the easiest way is to derive from
+`CrossToggleBase`.  This implements the vast majority of the logic you need for
+a Toggle.  All you need to do is implement the `PlayEffect` function:
+
+```csharp
+protected override void PlayEffect(bool instant)
+{
+    // Your logic here.
+}
+```
+
+For instance, if you were creating a turn-lever toggle, like the sort that used
+to appear in old-style mechanical voting machines, you might use this function
+to begin a rotation animation.
+
+If you want to see some fully-worked examples of working child classes, check
+these out:
+
+* `CrossToggle.cs`
+* `CrossSlideToggle.cs`
+* `CrossIconToggle.cs`
+
+### CrossSpinnerBase
+
+If you want to make a new Spinner type, the easiest way is to derive from
+`CrossSpinnerBase`.  This implements the vast majority of the logic you need
+for a Spinner.  All you need to do is implement these attributes and functions:
+
+```csharp
+public override int Step { get; }
+
+public override int Min { get; }
+
+public override int Max { get; }
+
+public override void UpdateVisuals() { }
+```
+
+`UpdateVisuals()` updates the appearance of the spinner when the value of the
+spinner changes.
+
+## Axis Controls
+
+Sliders, Scrollbars, and Spinners are all axis-controls.  Axis-controls
+are in vertical or horizontal configurations, and can be driven by axis
+controls, on keyboard or gamepad controller.
+
+The trouble with axis controls is that if you have other UI elements that
+are in-line with the axis of your control, it can create an ambiguous
+situation, where it's not clear whether the user intends to change the
+value of the control, or whether they intend to navigate to the neighboring
+UI element.
+
+Because of this, Crossguard introduces the concept of Isolated Mode.  When
+an Axis Control is in Isolated Mode, it captures all navigation events in
+the axis of interest.  There is also a special [State](#statesystem)
+associated with this mode, so that the user can visually see when it's
+enabled. For Axis Controls, this mode is only used when using axis-navigation,
+and not with mouse controls, where it's unnecessary.
+
+Axis controls all have an `Axis Control Helper` component.
+
+![](images/axis_control_helper.png)
+
+The settings are:
+
+**Always Require Isolation** - This will cause the Axis control to require
+Isolation Mode, even if there are no ambiguous neighboring controls.  You
+may want to use this for consistency, if you have some ambiguous and some
+unambiguous controls in the same section.
+
+**Decrement Button** - Any button assigned here will automatically be bound
+to the Decrement function on the control.  Its Isolated and Disabled states
+will be driven by the axis control.
+
+**Increment Button** - Any button assigned here will automatically be bound
+to the Increment function on the control.  Its Isolated and Disabled states
+will be driven by the axis control.
+
+**Repeat Delay** - When you press the increment/decrement buttons, this
+determines the delay before the event starts repeating.
+
+**Repeat Rate** - When you press the increment/decrement buttons, this
+determines the number of times this will repeat per second.
+
+### Axis Control Buttons
+
+The Increment and Decrement buttons available to Axis Controls are optional,
+where there are other ways to control the element (e.g. Sliders, Scrollbars),
+but necessary, if you intend to use them in a Mouse/Touch context, but there is
+no other means of input (e.g. Spinners).  If you assign an Increment and
+Decrement button, these buttons will be automatically bound to the Increment
+and Decrement button on the control.
+
+
+As mentioned above, holding these buttons down will repeat the increment or
+decrement actions, with a delay and repeat driven by the `Repeat Delay` and
+`Repeat Rate` settings on the Axis Control Helper component.  The `Isolated`
+and `Disabled` states on these buttons will also be driven by the Axis Control.
+Additionally, these buttons will animate appropriately, when you use your
+controller or keyboard to drive the Axis Control element.
+
+!!! Tip
+    **Troubleshooting Tip**: If your Increment and Decrement buttons are stuck
+    in their down state, after using your controller/keyboard to drive an Axis
+    Control, it's likely that the `MoveEnd` event is not being triggered.  See
+    the Preparing a Scene section for more on this.
+
+
+Increment and Decrement buttons do not need to be in the hierarchy of the
+Axis Control to function. Moreover, you probably _do not_ want to drive any
+changes to these buttons from the Transitioner on the Axis Control, because
+they might interfere with the Transitioner on the buttons, themselves.
+
+# Transitioners
+
+Crossguard uses its own transition system, instead of the built-in transitions
+in UGUI.
+
+## Crossguard Transitioners
+
+Rather than be limited to UGUI's 3 modes, UGUI supports any kind of
+Transitioner you can dream up.  A Transitioner simply need derive from
+`AbstractTransitioner`, and support the Crossguard [states](#statesystem)
+for it to work with the system.
+
+Common properties across derivatives include:
+
+* `Tab Before` and `Tab After` -- These are used for field-tabbing.  See the
+  Navigation section for more on this.
+* `Select on Enable` -- This indicates that this item should be selected, when
+  it is enabled.  This is only used when we are axis-navigating, or when an
+  element is in a tab-navigation scenario.
+* `Seletion Indicator` -- This is the object (if any) that should be used as
+  the Selection Indicator for this element, when in an axis-navigation
+  situation.  See the Selection Indicator section for more on this.
+
+All other settings are unique to a specific Transitioner.
+
+## Included Transitioners
+
+There are three Transitioners included in Crossguard, intended to cover
+everything that UGUI could do with transitioners (and more).
+
+### Color and Scale
+
+![](images/color_and_scale_trans.png)
+
+The Color and Scale Transitioner allows you to describe Color, Alpha, and
+Scale for as many sub-objects you want, within the hierarchy of your
+element.  Because this can result in some complex style definitions,
+Styles are stored in a Scriptable Object asset, which can be re-used on
+as many similar elements as you would like.
+
+#### Color and Scale Style
+
+To create a new Style for your Transitioner, go to
+`Assets > Create > Crossguard UI > Color and Scale Style` (or use the project
+hierarchy context menu).  Then, assign your new Style to the `Style` field
+on your component.
+
+![](images/color_and_scale_style.png)
+
+The Style object includes an entry for each of the [states](#statesystem)
+supported by Crossguard.  You can add as many entries as you want within
+a state, as long as they each correspond to a unique Graphic object
+in the hierarchy.  All objects should have `RectTransform` components on them,
+and any that have Color/Alpha changes should also have `CanvasRenderer`
+components.
+
+Each object listed in Crossguard should have its correct name written out,
+exactly as it appears in the Unity hierarchy.  If an object is not an immediate
+child of the root object, then the path to the object should be delimited by
+the `/` character (as in the image, above).
+
+To style the root object, itself, leave the name of the object blank, as seen
+here:
+
+![](images/root_object_blank.png)
+
+In this example, the Image component on the root object will be turned orange.
+
+A checkmark next to a value means that the value is actually being _used_.
+All values without a checkmark will be completely ignored, so it doesn't
+matter what they are set to.
+
+It's a good idea to fully describe the default state of anything that is going
+be changed in your `Normal` state, because this will help your objects recover
+to their default state, when a [higher-priority](#orderofprecedence) state
+is transitioned off.
+
+Note that colors that are set by the Color and Scale Transitioner are
+effectively multiplied by the base color of the Graphic which is being changed.
+In light of this, it's a good idea to leave objects white, if you intend
+to control their color with the Transitioner.
+
+### Simple Sprite Swap
+
+![](images/simple_sprite_swap.png)
+
+
+The Simple Sprite Swap transitioner works similarly to Unity's Sprite Swap
+transition.  Each [state](#statesystem) has one Sprite associated with it,
+and this is assigned to the `Target` image.  This Transitioner strictly
+follows the rules of [precedence](#orderofprecedence) outlined in the
+State System section.
+
+### Animation
+
+![](images/animation_transitioner.png)
+
+Sometimes, you still need to do something that isn't supported by your other
+Transitioners.  In that case, you can still fall back on an Animator-based
+Transitioner.  This Transitioner is far less opinionated than the Unity
+Animation Transitioner, but the tradeoff for that freedom is that it requires
+some advanced knowledge to use.
+
+To set up an Animation Transitioner, you'll need to assign the `Animator`
+field to an Animator in your hierarchy (it doesn't have to be your element
+root, but it usually will be).  You should also set a `Transition Time` that
+approximates the state transition times you're going to use in your
+animation state machine.  (This is used for animating button-presses that
+are triggered by function calls, rather than by a mouse-click.)
+
+Whereas Unity's Animation transitions set triggers, upon entering the various
+Selectable states, Crossguard sets booleans for this.  In your Animator panel,
+you should set up your Paramters, like this, with a boolean for each state:
+
+![](images/animator_parameters.png)
+
+(You may safely skip any state that isn't used by this element.)
+
+If you want to keep things simple, you can create separate layers for each
+of the states that you're using, like this:
+
+![](images/animator_layers.png)
+
+(I skipped the `Isolated` state, because I wasn't using it for this element.)
+
+The order matters here -- layers lower in the list take precedence over
+layers higher in the list.  So, if you want to reproduce the
+order-of-precedence used [elsewhere in Crossguard](#orderofprecedence), you
+need only list these layers in the same order.
+
+In most cases, your `Normal` state can be as simple as this:
+
+![](images/animator_normal_state.png)
+
+And for the other states, you can start out with something like this:
+
+![](images/animator_other_states.png)
+
+Use the boolean flag for that state to trigger those transitions.
+
+![](images/animator_conditions.png)
+
+And make sure to turn off the `Exit Time` on your transitions.
+
+When you get the hang of it, you can do more sophisticated things, if you
+want to, but you might never need to, because the above is pretty expressive.
+
+## Adding New Transitioners
+
+To add a new Transitioner, make a child class of `AbstractTransitioner`.
+This does the vast majority of everything you need.  This is the entirety of
+what you need to implement, to make it go:
+
+```csharp
+protected virtual void InitializeStates() { }
+
+protected abstract void ClearAllComponents();
+
+protected abstract void ForceAppearance(InteractState state);
+
+protected abstract void TransitionOn(InteractState state, bool immediate);
+
+protected abstract void TransitionOff(InteractState state, bool immediate);
+```
+
+`InitializeStates()` is entirely optional. It gets called during `Awake()`,
+and is a good place to put any pre-processing or cacheing of your transition
+data that you wish to do.
+
+`ClearAllComponents()` removes the visual effects of *all* states, including
+`Normal`.
+
+`ForceAppearance(InteractState state)` is used to immediately force an element
+into a given state, even if `InitializeStates()` has never been called.  This
+is primarily used inside the Editor to force the appearance of an uninitialized
+element.
+
+`TransitionOn(InteractState state, bool immediate)` is the function that
+is called when a state is turned on.
+
+`TransitionOff(interactState state, bool immediate)` is the function that is
+called when a state is turned off.
+
+If you need to see examples of how to use these,
+`SimpleSpriteSwapTransitioner.cs` and `AnimationTransitioner.cs` are very
+simple easy-to-read implementations that illustrate how much power you can get
+out of a very short, sweet Transitioner script. `ColorAndScaleTransitioner.cs`,
+in contrast, is a fully-worked example demonstrating a far more sophisticated
+Transitioner.
+
+# Navigation
+
+## Mouse Navigation
+
+Unlike in UGUI, Mouse navigation should work as-expected.  You should be able
+to use UGUI's stock `Navigation` without leaving confusing selection highlights
+everywhere.  An element that you have clicked on is considered "Selected"
+by the event system, but this will be functionally invisible, unless an
+element has [Tab Navigation](#tabnavigation) targets set up.  Mouseover
+highlights should clean up properly when reactivating a deactivated element.
+
+## Touch Navigation
+
+This should work the same as Mouse Navigation, except that Highlighting is
+turned off entirely on Mobile.  Unlike UGUI, you should never have errant
+mouseover highlights hanging around on previously clicked elements.
+
+## Axis Navigation
+
+Axis Navigation will normally use UGUI's stick `Navigation` settings on the
+UI elements.  If you perform Axis Navigation in a Mouse or Touch environment,
+this should immediately enable the visibility of the Selection state and
+[Selection Indicator](#selectionindicator), if one is configured.  (But
+it will vanish again if a click is used, unless Tab Navigation is set up for
+the element being clicked.)
+
+
+## Tab Navigation
+
+Every Transitioner has `Tab Before` and `Tab After` settings on them.  These
+specify the elements that will be visited if you use `Shift-Tab` or `Tab` keys,
+respectively.
+
+These are, in most cases, based on `IPrevFieldHandler` and
+`INextFieldHandler`, and you can remap what keys trigger this, but
+unfortunately, due to technical limitations, the Tab key behavior is hard-coded
+in the `CrossInputField` element, so you should probably stick to the
+convention for this.
+
+If anything is set in `Tab Before` or `Tab After`, the `Selected` state for
+that element (and any [Selection Indicator](#selectionindicator)
+configured for it) will always be visible, when that element is selected, even
+if it is selected by mouse.
+
+# Toggle Groups
+
+## Cross Radio Group
+
+![](images/cross_radio_group.png)
+
+Cross Radio Group is primarily intended as a replacement for UGUI's `Toggle
+Group`. However, it has a couple of important quality-of-life improvements.
+
+First, it keeps track of the currently selected toggle, which can be
+retrieved using the `SelectedToggle` parameter (`null` if there is no current
+selection).  The Id of the selected toggle can also be retrieved with the `Id`
+toggle. (`CrossRadioGroup.NoSelection` in the event that nothing is selected.)
+
+Second, there is an `OnValueChanged` event on the group, itself, which you
+can use to listen for when the selected toggle changes.
+
+Cross Radio Group should work with any toggle which derives from
+`CrossToggleBase`, and is not limited to `CrossToggle`.
+
+## Adding New Toggle Groups
+
+To implement a toggle group with different behavior, but compatible with
+Crossguard's toggles, you need only create a child class of
+`CrossToggleGroupBase`.  You will probably want to write your own
+implementations of `AllowSwitchOff`, `NotifyToggleOn`, `NotifyToggleOff`,
+`EnsureValidState`, and `SetAllTogglesOff`.
+
+# Selection Indicator
+
+![](images/selection_indicator.png)
+
+To create a Selection Indicator, add the `Selection Indicator` component to
+an object, and place it in the hierarchy where you would like it to appear,
+mindful of the draw-order of elements.
+
+The `Sizer` attribute should be a `RectTransform` in your Selection Indicator
+that will be fitted to the object that is being selected.  (In most cases,
+this will be the root object of the Selection Indicator.)
+
+To use the Selection Indicator, simply assign it as the `Selection Indicator`
+on the Transitioners for the objects that the indicator should apply to.
+It will be visible in all cases in which the `Selected` state for an element
+would normally be visible.
+
+You may use as many Selection Indicators as you would like, in a given scene.
+The `Selection Indicator` setting on the element Transitioners will always
+dictate which indicator should be used, for any specific element.  The other
+indicators will all be invisible, when they are not in-use.
+
+# Gamepad Prompts
+
+## Controller Prompt
+
+Controller prompts are intended to provide a visual cue as to how to perform
+a given Action in your game.  They can also be used to bind that Action
+to a given Button, Toggle or other clickable element in your game.
+
+![](images/controller_prompt.png)
+
+`Action Name` is the Action you would like to bind this prompt to.
+
+`Layer` specifies a group that this prompt belongs to that can be
+pre-empted (say, for instance, if a dialog comes into the foreground).  More
+on this in the Prompt Layers subsection, below.
+
+`Selectable` is an optional  UI element to bind this prompt to.  If this
+is set, then pressing and releasing the control associated with the Action will
+press and release the Selectable assigned here.  This will perform any
+events and transitions associated with this Selectable.
+
+`Display` is a `TextMeshProUGUI` which displays the prompt art, itself.  The
+reason we use a text-element for this is so that we have the flexibility to
+use either sprite art, or an icon font to display the prompt.
+
+If [set up properly](#settingupforuse), the prompt should automatically
+update its appearance, based on the active input scheme, or should hide,
+if no art token is provided for the prompt.
+
+## Prompt Layers
+
+Layers are a way for the prompt system to pre-empt prompts with the prompts
+of a higher priority state or overlay.  To make a Layer the Active layer,
+on the top of the layer stack, simply call
+`ControllerPromptManager.PushLayer("LayerName")`, where `LayerName` is the
+name of the layer that you would like to activate.
+
+Any prompts that are not in the top layer will be effectively ignored, even
+if the Actions fire.  However, the appearance of prompts in the background
+layers will still change, if the input scheme changes.
+
+When you are done with that layer (say, a scene has ended, or an overlay
+has been hidden), you can `ControllerPromptManager.PopLayer("LayerName")`
+to pop it from the top of the stack.
+
+!!! WARNING
+    **Known Issue**: The system will currenly only pop the top element off the
+	stack if it matches the name passed into `PopLayer`.  However, it won't dig
+	it out of the stack, if it's further down.  This should probably be
+	addressed.
+
+## Setting Up For Use
+
+Using Controller Prompts requires a little more setup than the reset of
+Crossguard UI, because it requires more integration with your input system
+than the other pieces do. There is a `ControllerPromptManager` singleton that
+acts as a nerve center for the Controller Prompts.  It is dependent upon
+two additional pieces (which can optionally be combined, if you choose).
+
+### Token Provider
+
+The Token Provider is a piece of code that tells the Controller Prompts what
+string should be used to display the appropriate sprite or icon font glyph
+for a given control button.  The Token Provider should implement
+`IControllerTokenProvider`.  Additionally either the Token Provider, or some
+other code system, needs to call
+`ControllerPromptManager.Instance.SetTokenProvider(provider)` and
+`ControllerPromptManager.Instance.ClearTokenProvider(provider)`, to let the
+`ControllerPromptManager` know what provider it should be using.
+
+In the test project, there is an example of a working token provider, in the
+`QuickAndDirtyTokenProvider.cs` file.  It's a low-quality example, but it at
+least demonstrates how the token provider is intended to impelent its
+interface.
+
+### Action Relay
+
+The Action Relay is a piece of code that tells the Controller Prompts when
+the gamepad or other controller is firing an action they may be interested in.
+It should implement `IControllerActionRelay`, and like the Token Provider, it
+should call `ControllerPromptManager.Instance.SetActionRelay(relay)` and
+`ControllerPromptManager.Instance.ClearActionRelay(relay)`.
+
+The interface includes functions for registering/unregistering interest in
+various actions that are bound to Controller Prompts.  When the buttons/keys
+associated with these Actions are pressed, you should call
+`ControllerPromptManager.Instance.PressControl(actionName)` and when they are
+released, you should call
+`ControllerPromptManager.Instance.ReleaseControl(actionName)`.
+
+In the test project, there is an exmaple of a working Action Relay, in
+`ControllerPromptActionRelay.cs` file. This specific one is designed to work
+with Unity's new Input System package.
+
+### Changing Devices
+
+When the active device or control scheme changes, you should call
+`ControllerPromptManager.Instance.RefreshTokens()` to force the prompts to
+load in the new prompt art.
+
+`QuickAndDirtyTokenProvider.cs` in the test project demonstrates this, in the
+`UpdateTokenMap()` function.
+
+# Known Issues
+
+This section contains a list of any reamining issues that haven't been
+addressed yet.
+
+## The CrossFade Blues
+
+If you have an element that uses `Graphic.CrossFadeAlpha` or
+`Graphic.CrossFadeColor` internally (CrossToggle, for instance), it may
+conflict with the `Color And Scale Transitioner`, if they are attempting to
+tween the same element.
+
+If we ever need to fix this, we will probably need to add some functionality to
+the transitioner to cooperate with other color/alpha tweens.
+
+For now, the best way to work around it is to avoid including these elements
+in your transitions, or make their changes (either on the Transitioner or on
+the competing animation) instantaneous.
+
+## Multi-Editing
+
+Some Cross-elements are not currently capable of multi-editing.  To support
+this, we're going to have to make custom editors for all our elements, which
+we haven't done yet.
+
+## Replacer Scripts
+
+We don't yet have any scripts for automatically replacing UIGUI elements
+with equivalent Crossguard elements.  However, this would be very nice
+to have.
+
+## Animation Transitioner Optimization
+
+Like Unity's Animation Transition, Crossguard's has some less-than-ideal
+performance, because the Animator does updates all the time, even when it's
+sitting around in `Normal` state.  It would be nice to investigate whether
+there's a viable way to snooze the Animator while the element is parked in a
+state with a length 0 animation.
+
+
+<!-- Markdeep: --><script src="markdeep.min.js" charset="utf-8"></script>

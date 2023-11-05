@@ -1,0 +1,63 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d6236f2f461559f41935c72c6944e626, type: 3}
+  m_Name: Spinner Style
+  m_EditorClassIdentifier: 
+  TransitionTime: 0.1
+  NormalState:
+  - ComponentPath: Background
+    UseColor: 1
+    Color: {r: 1, g: 0.9254902, b: 0.81960785, a: 1}
+    UseAlpha: 0
+    Alpha: 0
+    UseScale: 0
+    Scale: {x: 0, y: 0}
+  - ComponentPath: Background/Readout
+    UseColor: 0
+    Color: {r: 0, g: 0, b: 0, a: 0}
+    UseAlpha: 1
+    Alpha: 1
+    UseScale: 0
+    Scale: {x: 0, y: 0}
+  - ComponentPath: Selector
+    UseColor: 0
+    Color: {r: 0, g: 0, b: 0, a: 0}
+    UseAlpha: 1
+    Alpha: 0
+    UseScale: 0
+    Scale: {x: 0, y: 0}
+  HighlightedState: []
+  SelectedState:
+  - ComponentPath: Selector
+    UseColor: 0
+    Color: {r: 0, g: 0, b: 0, a: 0}
+    UseAlpha: 1
+    Alpha: 1
+    UseScale: 0
+    Scale: {x: 0, y: 0}
+  IsolatedState: []
+  PressedState: []
+  DisabledState:
+  - ComponentPath: Background
+    UseColor: 1
+    Color: {r: 0.5, g: 0.5, b: 0.5, a: 1}
+    UseAlpha: 0
+    Alpha: 0
+    UseScale: 0
+    Scale: {x: 0, y: 0}
+  - ComponentPath: Background/Readout
+    UseColor: 0
+    Color: {r: 0, g: 0, b: 0, a: 0}
+    UseAlpha: 1
+    Alpha: 0.5
+    UseScale: 0
+    Scale: {x: 0, y: 0}
