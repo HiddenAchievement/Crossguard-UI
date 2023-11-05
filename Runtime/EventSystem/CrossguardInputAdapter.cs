@@ -26,7 +26,6 @@ namespace HiddenAchievement.CrossguardUi
         {
             GameObject selected = EventSystem.current.currentSelectedGameObject;
             if (selected == null) return;
-            _eventData.selectedObject = selected;
             ExecuteEvents.Execute(selected, _eventData, functor);
         }
         

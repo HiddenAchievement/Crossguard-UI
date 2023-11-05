@@ -2,7 +2,16 @@
 
 All notable end-user facing changes should be documented in this file.
 
-## [1.0.5]
+## [1.0.6] - 2023-11-06
+
+### Fixed
+
+- `CrossguardInputAdapter` should no longer throw an error about selecting while already selecting
+   when selecting an InputField with the mouse after navigating with the keyboard.
+
+## [1.0.5] - 2023-11-04
+
+### Changed
 
 - Updated README to prepare for deployment.
 
