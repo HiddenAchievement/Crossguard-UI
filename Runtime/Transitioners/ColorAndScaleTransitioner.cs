@@ -53,7 +53,7 @@ namespace HiddenAchievement.CrossguardUi
         private ColorAndScaleStyle _style = default;
 
         private readonly List<ComponentInfo>[] _stateComponents = new List<ComponentInfo>[(int)InteractState.Count];
-        private readonly List<ComponentInfo> _componentInfo = new List<ComponentInfo>(2);
+        private readonly List<ComponentInfo> _componentInfo = new(2);
         
         private List<ScaleTween> _activeScaleTweens;
         

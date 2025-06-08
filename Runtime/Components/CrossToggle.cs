@@ -66,7 +66,5 @@ namespace HiddenAchievement.CrossguardUi
                 _checkGraphic.CrossFadeAlpha(_isOn ? 1f : 0f, instant ? 0f : 0.1f, true);
             }
         }
-
-
     }
 }

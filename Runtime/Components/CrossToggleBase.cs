@@ -40,7 +40,7 @@ namespace HiddenAchievement.CrossguardUi
             set
             {
                 SetToggleGroup(value, true);
-                PlayEffect(true);
+                UpdateAppearance(true);
             }
         }
 
@@ -91,7 +91,7 @@ namespace HiddenAchievement.CrossguardUi
             }
 
             SetToggleGroup(_group, false);
-            PlayEffect(true);
+            UpdateAppearance(true);
         }
 
         protected override void OnDisable()
@@ -138,7 +138,7 @@ namespace HiddenAchievement.CrossguardUi
             // due to already active toggle in a toggle group being clicked.
             // Controls like Dropdown rely on this.
             // It's up to the user to ignore a selection being set to the same value it already was, if desired.
-            PlayEffect(false);
+            UpdateAppearance(false);
             if (sendCallback)
             {
                 UISystemProfilerApi.AddMarker("CrossSlideToggle.value", this);
@@ -155,7 +155,7 @@ namespace HiddenAchievement.CrossguardUi
 
         protected override void Start()
         {
-            PlayEffect(true);
+            UpdateAppearance(true);
         }
 
         private void InternalToggle()
@@ -200,6 +200,19 @@ namespace HiddenAchievement.CrossguardUi
             // Note: Don't refer to m_Group here as it's not guaranteed to have been set.
             if (newGroup != null && IsOn && IsActive())
                 newGroup.NotifyToggleOn(this, false);
+        }
+
+        private void UpdateAppearance(bool immediate)
+        {
+            PlayEffect(immediate);
+            if (_isOn)
+            {
+                _transitioner.SetStateFlag(InteractState.Checked, immediate);
+            }
+            else
+            {
+                _transitioner.ClearStateFlag(InteractState.Checked, immediate);
+            }
         }
     }
 }

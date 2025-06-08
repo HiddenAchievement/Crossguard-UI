@@ -14,8 +14,9 @@ namespace HiddenAchievement.CrossguardUi
         public ColorAndScaleStyleEntry[] NormalState;
         public ColorAndScaleStyleEntry[] HighlightedState;
         public ColorAndScaleStyleEntry[] SelectedState;
-        public ColorAndScaleStyleEntry[] IsolatedState;
         public ColorAndScaleStyleEntry[] PressedState;
+        public ColorAndScaleStyleEntry[] IsolatedState;
+        public ColorAndScaleStyleEntry[] CheckedState;
         public ColorAndScaleStyleEntry[] DisabledState;
     }
 }

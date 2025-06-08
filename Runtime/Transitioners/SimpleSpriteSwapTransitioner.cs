@@ -16,9 +16,11 @@ namespace HiddenAchievement.CrossguardUi
         [SerializeField]
         private Sprite _selectedState    = null;
         [SerializeField]
+        private Sprite _pressedState     = null;
+        [SerializeField]
         private Sprite _isolatedState    = null;
         [SerializeField]
-        private Sprite _pressedState     = null;
+        private Sprite _checkedState     = null;
         [SerializeField]
         private Sprite _disabledState    = null;
 
@@ -26,8 +28,25 @@ namespace HiddenAchievement.CrossguardUi
         [SerializeField]
         private Image _targetImage = null;
 
+        private Sprite[] _stateSprites = null;
+        
 
         public override float TransitionTime => 0.15f;
+
+        protected override void Awake()
+        {
+            InitializeSprites();
+            base.Awake();
+        }
+
+        private void InitializeSprites()
+        {
+            if (_stateSprites is { Length: > 0 }) return;
+            _stateSprites = new[]
+            {
+                _normalState, _highlightedState, _selectedState, _pressedState, _isolatedState, _checkedState, _disabledState
+            };
+        }
 
         protected override void ClearAllComponents()
         {
@@ -37,64 +56,43 @@ namespace HiddenAchievement.CrossguardUi
 
         protected override void ForceAppearance(InteractState state)
         {
-            SetSprite(state);
+            InitializeSprites();
+            SetSprite((int)state);
         }
 
         protected override void TransitionOn(InteractState state, bool immediate)
         {
-            // If there's a higher priority state, don't bother changing the appearance.
-            for (int i = (int) InteractState.Count - 1; i > (int)state; i--)
+            // Find the highest priority active state that has a sprite associated with it.
+            for (int i = (int)InteractState.Count - 1; i >= 0; i--)
             {
-                if (_stateFlags[i]) return;
+                if (!_stateFlags[i]) continue;
+                if (SetSprite(i)) return;
             }
-
-            SetSprite(state);
+            
+            // If we get here, somehow, just set it to normal.
+            SetSprite((int)InteractState.Normal);
         }
 
         protected override void TransitionOff(InteractState state, bool immediate)
         {
-            // If there's a higher priority state, don't bother changing the appearance.
-            for (int i = (int) InteractState.Count - 1; i > (int)state; i--)
-            {
-                if (_stateFlags[i]) return;
-            }
-
-            // Find the highest priority state after the one being turned off.
-            for (int i = (int) state - 1; i >= 0; i--)
+            // Find the highest priority active state that has a sprite associated with it.
+            for (int i = (int)InteractState.Count - 1; i >= 0; i--)
             {
                 if (!_stateFlags[i]) continue;
-                SetSprite((InteractState) i);
-                return;
+                if (SetSprite(i)) return;
             }
             
             // If we get here, somehow, just set it to normal.
-            SetSprite(InteractState.Normal);
+            SetSprite((int)InteractState.Normal);
         }
 
-        private void SetSprite(InteractState state)
+        private bool SetSprite(int state)
         {
-            if (_targetImage == null) return;
-            switch (state)
-            {
-                case InteractState.Normal:
-                    _targetImage.overrideSprite = _normalState;
-                    break;
-                case InteractState.Highlighted:
-                    _targetImage.overrideSprite = _highlightedState;
-                    break;
-                case InteractState.Selected:
-                    _targetImage.overrideSprite = _selectedState;
-                    break;
-                case InteractState.Isolated:
-                    _targetImage.overrideSprite = _isolatedState;
-                    break;
-                case InteractState.Pressed:
-                    _targetImage.overrideSprite = _pressedState;
-                    break;
-                case InteractState.Disabled:
-                    _targetImage.overrideSprite = _disabledState;
-                    break;
-            }
+            if (_targetImage == null) return true;
+            Sprite sprite = _stateSprites[state];
+            if (sprite == null) return false;
+            _targetImage.overrideSprite = sprite;
+            return true;
         }
     }
 }

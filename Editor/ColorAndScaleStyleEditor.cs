@@ -17,8 +17,13 @@ namespace HiddenAchievement.CrossguardUi
 
         private static (string, string)[] _states =
         {
-            ("Normal", "NormalState"), ("Highlighted", "HighlightedState"), ("Selected", "SelectedState"),
-            ("Pressed", "PressedState"), ("Isolated", "IsolatedState"), ("Disabled", "DisabledState")
+            ("Normal", "NormalState"),
+            ("Highlighted", "HighlightedState"),
+            ("Selected", "SelectedState"),
+            ("Pressed", "PressedState"),
+            ("Isolated", "IsolatedState"),
+            ("Checked", "CheckedState"),
+            ("Disabled", "DisabledState")
         };
 
         private SerializedProperty _transitionTime;

@@ -13,6 +13,7 @@ namespace HiddenAchievement.CrossguardUi
         Selected,
         Pressed,
         Isolated,
+        Checked,
         Disabled,
         Count
 	}

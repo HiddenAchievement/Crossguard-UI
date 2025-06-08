@@ -2,6 +2,23 @@
 
 All notable end-user facing changes should be documented in this file.
 
+
+## [1.0.7] 2025-06-07
+
+### Changed
+
+- Updated documentation (and small corrections).
+
+### Added
+
+- Added a `Checked` state that can be used by toggles, if they want more expressive styling, when checked.
+
+### Fixed
+
+- Fixed a bug that caused the `SimpleSpriteSwapTransitioner` to behave badly if a sprite wasn't set on one of the
+  states.
+
+
 ## [1.0.6] - 2023-11-06
 
 ### Fixed

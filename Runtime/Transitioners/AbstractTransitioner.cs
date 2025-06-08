@@ -44,7 +44,7 @@ namespace HiddenAchievement.CrossguardUi
 
         #region Unity Functions
         
-        protected void Awake()
+        protected virtual void Awake()
         {
             Initialize();
         }
@@ -261,7 +261,7 @@ namespace HiddenAchievement.CrossguardUi
 
         public void SetStateFlag(InteractState flag, bool immediate, bool force = false)
         {
-            //Debug.Log("<color=lime>SetStateFlag " + name + " flag: " + flag + "</color>");
+            // Debug.Log("<color=lime>SetStateFlag " + name + " flag: " + flag + "</color>");
             if (!force && _stateFlags[(int)flag]) return;
             _stateFlags[(int)flag] = true;
 
@@ -283,7 +283,6 @@ namespace HiddenAchievement.CrossguardUi
             if (!_initialized) return;
 
             // Debug.Log("<color=orange>ClearStateFlag " + flag + "</color>");
-
             TransitionOff(flag, immediate || !gameObject.activeInHierarchy);
         }
 
