@@ -2,6 +2,12 @@
 
 All notable end-user facing changes should be documented in this file.
 
+## [1.0.8] 2025-06-12
+
+### Changed
+
+- Integrated LitMotion to provide more robust tweening capabilities. This primarily impacted ColorAndScaleTweener, for
+  now.
 
 ## [1.0.7] 2025-06-07
 

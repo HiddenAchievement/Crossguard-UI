@@ -3,6 +3,11 @@
 Crossguard UI is a package of Unity UGUI addons for better transitions and
 cross-platform support
 
+## Dependencies
+
+This package depends on [LitMotion](https://github.com/annulusgames/LitMotion) for tweening. You should
+add that to your project first, before proceeding.
+
 ## How to Install
 
 There are multiple ways you can install this package:
@@ -26,3 +31,7 @@ disk...` in Unity's Package Manager.
 ## Documentation
 
 See the [Documentation](Documentation/index.html) for project documentation.
+
+## About Us
+
+[Hidden Achievement](http://hiddenachievement.com) is a small indie game company, and we also do contracting for other studios. Visit our website to find out more.

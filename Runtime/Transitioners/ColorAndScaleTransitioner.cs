@@ -6,10 +6,11 @@
 #define INTERACT_CONSOLE
 #endif
 
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using LitMotion;
+using LitMotion.Extensions;
 
 namespace HiddenAchievement.CrossguardUi
 {
@@ -19,44 +20,22 @@ namespace HiddenAchievement.CrossguardUi
     [ExecuteAlways]
 	public class ColorAndScaleTransitioner : AbstractTransitioner
     {
-        private class ScaleTween
-        {
-            public RectTransform Component;
-            public float StartTime;
-            public Vector2 StartScale;
-            public Vector2 EndScale;
-
-            public void Set(RectTransform component, Vector2 scale)
-            {
-                Component = component;
-                StartScale = component.localScale;
-                EndScale = (Vector3)scale + Vector3.forward;
-                StartTime = Time.time;
-            }
-        }
-
-        private static readonly Stack<ScaleTween> _scaleTweenPool = new Stack<ScaleTween>();
-
         private class ComponentInfo
         {
             public string Path = string.Empty;
-            public RectTransform Component = null;
-            public Graphic Graphic = null;
-            public CanvasRenderer Renderer = null;
+            public RectTransform Component;
+            public CanvasRenderer Renderer;
             public readonly Color?[] Colors = new Color?[(int)InteractState.Count];
             public readonly float?[] Alphas = new float?[(int)InteractState.Count];
-            public readonly Vector2?[] Scales = new Vector2?[(int)InteractState.Count];       
+            public readonly Vector2?[] Scales = new Vector2?[(int)InteractState.Count];
         }
 
         [SerializeField]
         [Tooltip("Assign the scriptable object containing this element's style.")]
-        private ColorAndScaleStyle _style = default;
+        private ColorAndScaleStyle _style;
 
         private readonly List<ComponentInfo>[] _stateComponents = new List<ComponentInfo>[(int)InteractState.Count];
         private readonly List<ComponentInfo> _componentInfo = new(2);
-        
-        private List<ScaleTween> _activeScaleTweens;
-        
 
         #region Public Interface
         
@@ -130,17 +109,17 @@ namespace HiddenAchievement.CrossguardUi
                 RectTransform component = FindComponent(appearance.ComponentPath);
                 if (component == null) return null;
 
-                info = new ComponentInfo()
+                info = new ComponentInfo
                 {
                     Path = appearance.ComponentPath,
                     Component = component,
                     Renderer = component.GetComponent<CanvasRenderer>(),
-                    Graphic = component.GetComponent<Graphic>()
+                    // Graphic = component.GetComponent<Graphic>()
                 };
                 
                 _componentInfo.Add(info);
             }
-
+            
             if (appearance.UseColor)
             {
                 info.Colors[(int)state] = appearance.Color;
@@ -176,16 +155,13 @@ namespace HiddenAchievement.CrossguardUi
             List<ComponentInfo> infos = _stateComponents[stateIndex];
 
             if (infos == null) return;
-
-            bool useColor = false;
-            bool useAlpha = false;
-
+            
             for (int i = 0; i < infos.Count; i++)
             {
                 ComponentInfo info = infos[i];
 
-                useColor = (info.Colors[stateIndex] != null) && !HasHigherNonNullValue(info.Colors, stateIndex);
-                useAlpha = (info.Alphas[stateIndex] != null) && !HasHigherNonNullValue(info.Alphas, stateIndex);
+                bool useColor = (info.Colors[stateIndex] != null) && !HasHigherNonNullValue(info.Colors, stateIndex);
+                bool useAlpha = (info.Alphas[stateIndex] != null) && !HasHigherNonNullValue(info.Alphas, stateIndex);
 
                 if (useColor && useAlpha)
                 {
@@ -262,16 +238,20 @@ namespace HiddenAchievement.CrossguardUi
                 if ((colorIndex >= 0) && (alphaIndex >= 0))
                 {
                     // Debug.Log("<color lime>Reverting color to " + (InteractState)colorIndex + " and alpha to " + (InteractState)alphaIndex + "</color>");
+                    Debug.Assert(info.Colors[colorIndex].HasValue);
+                    Debug.Assert(info.Alphas[alphaIndex].HasValue);
                     SetComponentColorAndAlpha(info, info.Colors[colorIndex].Value, info.Alphas[alphaIndex].Value, immediate);
                 }
                 else if (colorIndex >= 0)
                 {
                     // Debug.Log("<color=lime>Reverting color to " + (InteractState)colorIndex + "</color>");
+                    Debug.Assert(info.Colors[colorIndex].HasValue);
                     SetComponentColor(info, info.Colors[colorIndex].Value, immediate);
                 }
                 else if (alphaIndex >= 0)
                 {
                     // Debug.Log("<color=lime>Reverting alpha to " + (InteractState)alphaIndex + "</color>");
+                    Debug.Assert(info.Alphas[alphaIndex].HasValue);
                     SetComponentAlpha(info, info.Alphas[alphaIndex].Value, immediate);
                 }
 
@@ -312,9 +292,9 @@ namespace HiddenAchievement.CrossguardUi
             // Debug.Log("<color=orange>SetComponentColorAndAlpha " + info.Component.name + " color: " + color + " alpha: " + alpha + " immediate: " + immediate + "</color>");
             
 #if UNITY_EDITOR
-            if (info?.Graphic == null)
+            if (info?.Renderer == null)
             {
-                Debug.LogError("ColorAndScaleTransitioner.SetComponentColorAndAlpha: Component " + info?.Component?.name + " is missing a Graphic component.");
+                Debug.LogError($"ColorAndScaleTransitioner.SetComponentColorAndAlpha: Component {info?.Component.name} is missing a Graphic component.");
                 return;
             }
 #endif
@@ -323,12 +303,11 @@ namespace HiddenAchievement.CrossguardUi
 
             if (immediate)
             {
-                // info.Renderer.SetColor(color);
-                info.Graphic.CrossFadeColor(color, 0, true, true, true);
+                info.Renderer.SetColor(color);
             }
             else
             {
-                info.Graphic.CrossFadeColor(color, _style.TransitionTime, true, true, true);
+                LMotion.Create(info.Renderer.GetColor(), color, _style.TransitionTime).BindToColor(info.Renderer);
             }
         }
 
@@ -337,22 +316,20 @@ namespace HiddenAchievement.CrossguardUi
             // Debug.Log("<color=orange>SetComponentColor " + info.Component.name + " color: " + color + " immediate: " + immediate + "</color>");
 
 #if UNITY_EDITOR
-            if (info?.Graphic == null)
+            if (info?.Renderer == null)
             {
-                Debug.LogError("ColorAndScaleTransitioner.SetComponentColor: Component " + info?.Component?.name + " is missing a Graphic component.");
+                Debug.LogError("ColorAndScaleTransitioner.SetComponentColor: Component " + info?.Component.name + " is missing a Graphic component.");
                 return;
             }
 #endif
             if (immediate)
             {
-                // color.a = info.Renderer.GetAlpha(); 
-                // info.Renderer.SetColor(color);
-                // info.Graphic.CrossFadeColor(color, 0, true, false, true);
-                info.Graphic.CrossFadeColor(color, 0, true, false, true);
+                color.a = info.Renderer.GetColor().a;
+                info.Renderer.SetColor(color);
             }
             else
             {
-                info.Graphic.CrossFadeColor(color, _style.TransitionTime, true, false, true);
+                LMotion.Create(info.Renderer.GetColor(), color, _style.TransitionTime).BindToColorNoAlpha(info.Renderer);
             }
         }
 
@@ -361,9 +338,9 @@ namespace HiddenAchievement.CrossguardUi
             // Debug.Log("<color=orange>SetComponentAlpha " + info.Component.name + " alpha: " + alpha + " immediate: " + immediate + "</color>");
 
 #if UNITY_EDITOR
-            if (info?.Graphic == null)
+            if (info?.Renderer == null)
             {
-                Debug.LogError("ColorAndScaleTransitioner.SetComponentAlpha: Component " + info?.Component?.name + " is missing a Graphic component.");
+                Debug.LogError("ColorAndScaleTransitioner.SetComponentAlpha: Component " + info?.Component.name + " is missing a Graphic component.");
                 return;
             }
 #endif
@@ -371,11 +348,13 @@ namespace HiddenAchievement.CrossguardUi
             if (immediate)
             {
                 // info.Renderer.SetAlpha(alpha);
-                info.Graphic.CrossFadeAlpha(alpha, 0, true);
+                Color color = info.Renderer.GetColor();
+                color.a = alpha;
+                info.Renderer.SetColor(color);
             }
             else
             {
-                info.Graphic.CrossFadeAlpha(alpha, _style.TransitionTime, true);
+                LMotion.Create(info.Renderer.GetColor().a, alpha, _style.TransitionTime).BindToColorA(info.Renderer);
             }
         }
 
@@ -387,7 +366,8 @@ namespace HiddenAchievement.CrossguardUi
             }
             else
             {
-                StartScaleTween(info, scale);
+                LMotion.Create((Vector2)info.Component.localScale, scale, _style.TransitionTime)
+                    .BindToLocalScaleXY(info.Component);
             }
         }
 
@@ -500,61 +480,5 @@ namespace HiddenAchievement.CrossguardUi
                 }
             }
         }
-
-        private void StartScaleTween(ComponentInfo info, Vector2 scale)
-        {
-            ScaleTween scaleTween = null;
-
-            if (_activeScaleTweens == null)
-            {
-                _activeScaleTweens = new List<ScaleTween>();
-            }
-            else
-            {
-                for (int i = 0; i < _activeScaleTweens.Count; i++)
-                {
-                    if (_activeScaleTweens[i].Component == info.Component)
-                    {
-                        // We already have a scale tween running for this component.  Update it with the new information.
-                        _activeScaleTweens[i].Set(info.Component, scale);
-                        return;
-                    }              
-                }
-            }
-
-            scaleTween = (_scaleTweenPool.Count > 0) ? _scaleTweenPool.Pop() : new ScaleTween();
-            scaleTween.Set(info.Component, scale);
-            _activeScaleTweens.Add(scaleTween);
-            if (_activeScaleTweens.Count == 1)
-            {
-                StartCoroutine(RunScaleTweens());
-            }
-        }
-
-        private IEnumerator RunScaleTweens()
-        {
-            do
-            {
-                for (int i = _activeScaleTweens.Count - 1; i >= 0; i--)
-                {
-                    ScaleTween scaleTween = _activeScaleTweens[i];
-                    float interval = Time.time - scaleTween.StartTime;
-                    if (interval > _style.TransitionTime)
-                    {
-                        // This tween is done.
-                        scaleTween.Component.localScale = scaleTween.EndScale;
-                        _activeScaleTweens.RemoveAt(i);
-                        _scaleTweenPool.Push(scaleTween);
-                        continue;
-                    }
-                    // This tween is not done.  Advance the animation.
-                    scaleTween.Component.localScale = Vector3.Lerp(scaleTween.StartScale, scaleTween.EndScale, interval / _style.TransitionTime);
-                }
-                yield return null;
-            }
-            while (_activeScaleTweens.Count > 0);
-        }
-
-
     }
 }
