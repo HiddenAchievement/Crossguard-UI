@@ -8,7 +8,6 @@
 
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 using LitMotion;
 using LitMotion.Extensions;
 
@@ -39,6 +38,7 @@ namespace HiddenAchievement.CrossguardUi
 
         #region Public Interface
         
+        /// <inheritdoc />
         public override float TransitionTime => (_style == null) ? 0 : _style.TransitionTime;
 
         public ColorAndScaleStyle Style
@@ -82,8 +82,7 @@ namespace HiddenAchievement.CrossguardUi
 
             if (_stateComponents[(int) state] == null)
             {
-                List<ComponentInfo> stateComponentInfo = new List<ComponentInfo>(appearance.Length);
-                _stateComponents[(int)state] = stateComponentInfo;
+                _stateComponents[(int)state] = new List<ComponentInfo>(appearance.Length);
             }
             else
             {
@@ -137,11 +136,7 @@ namespace HiddenAchievement.CrossguardUi
         }
 
 
-        /// <summary>
-        /// Change the visual appearance for a state flag being turned on.
-        /// </summary>
-        /// <param name="state">The state being turned on.</param>
-        /// <param name="immediate">Whether to change the appearance immediately, or play the transition.</param>
+        /// <inheritdoc />
         protected override void TransitionOn(InteractState state, bool immediate)
         {
             // Debug.Log("<color=cyan>" + name + " TransitionOn " + state + " immediate: " + immediate + "</color>");
@@ -183,20 +178,13 @@ namespace HiddenAchievement.CrossguardUi
             }
         }
 
-        /// <summary>
-        /// Change the visual appearance for a state flag being turned off.
-        /// </summary>
-        /// <param name="state">The state being turned off.</param>
-        /// <param name="immediate">Whether to change the appearance immediately, or play the transition.</param>
-        ///  
+        /// <inheritdoc />
         protected override void TransitionOff(InteractState state, bool immediate)
         {
             // Debug.Log("<color=cyan>" + name + " TransitionOff " + state + " immediate: " + immediate + "</color>");
 
             if (_style == null) return;
             
-            if (state == InteractState.Normal) return;
-
             immediate |= _style.TransitionTime == 0;
 
             int stateIndex = (int)state;
@@ -344,7 +332,6 @@ namespace HiddenAchievement.CrossguardUi
                 return;
             }
 #endif
-            
             if (immediate)
             {
                 // info.Renderer.SetAlpha(alpha);
@@ -370,27 +357,15 @@ namespace HiddenAchievement.CrossguardUi
                     .BindToLocalScaleXY(info.Component);
             }
         }
-
-        private RectTransform FindComponent(string path)
-        {
-            if (string.IsNullOrEmpty(path))
-            {
-                return transform as RectTransform;
-            }
-            
-            RectTransform component = transform.Find(path) as RectTransform;
-
-            return component;
-        }
-
+        
+        /// <inheritdoc />
         protected override void InitializeStates()
         {
             if (_style == null)
             {
-                Debug.LogWarning("TweenSelectable " + name + " is missing a Tween Selectable Style.");
+                Debug.LogWarning($"ColorAndScaleTransitioner {name} is missing a Style.", gameObject);
+                return;
             }
-
-            if (_style == null) return;
             
             _componentInfo.Clear();
             
@@ -403,13 +378,14 @@ namespace HiddenAchievement.CrossguardUi
 #if !INTERACT_MOBILE
             ProcessStateAppearance(InteractState.Isolated, _style.IsolatedState);
 #endif
+            ProcessStateAppearance(InteractState.Checked, _style.CheckedState);
             ProcessStateAppearance(InteractState.Pressed, _style.PressedState);
             ProcessStateAppearance(InteractState.Disabled, _style.DisabledState);
         }
 
+        /// <inheritdoc />
         protected override void ClearAllComponents()
         {
-            
             CanvasRenderer[] renderers = GetComponentsInChildren<CanvasRenderer>();
 
             for (int i = 0; i < renderers.Length; i++)
@@ -420,8 +396,8 @@ namespace HiddenAchievement.CrossguardUi
                 child.transform.localScale = Vector3.one;
             }
         }
-
         
+        /// <inheritdoc />
         protected override void ForceAppearance(InteractState state)
         {
             if (_style == null) return;
@@ -436,6 +412,9 @@ namespace HiddenAchievement.CrossguardUi
                     break;
                 case InteractState.Selected:
                     appearances = _style.SelectedState;
+                    break;
+                case InteractState.Checked:
+                    appearances = _style.CheckedState;
                     break;
                 case InteractState.Pressed:
                     appearances = _style.PressedState;

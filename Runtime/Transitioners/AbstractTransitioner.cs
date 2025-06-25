@@ -40,7 +40,7 @@ namespace HiddenAchievement.CrossguardUi
         private static bool s_axisNavMode;
         public static bool AxisNavMode => s_axisNavMode;
         
-        protected readonly BitArray _stateFlags = new BitArray((int)InteractState.Count);
+        protected readonly BitArray _stateFlags = new((int)InteractState.Count);
 
         #region Unity Functions
         
@@ -277,6 +277,8 @@ namespace HiddenAchievement.CrossguardUi
 
         public void ClearStateFlag(InteractState flag, bool immediate, bool force = false)
         {
+            if (flag == InteractState.Normal) return; // Normal is always present as a fallback.
+            
             if (!force && !_stateFlags[(int)flag]) return;
             _stateFlags[(int)flag] = false;
 
@@ -298,14 +300,37 @@ namespace HiddenAchievement.CrossguardUi
         #endregion
         
         #region Interior Overridables
+        /// <summary>
+        /// Process and pre-cache all state settings for this transitioner.
+        /// </summary>
         protected virtual void InitializeStates() { }
 
+        /// <summary>
+        /// Revert all components to a pristine state. Must be able to work without initialization running first.
+        /// </summary>
         protected abstract void ClearAllComponents();
 
+        /// <summary>
+        /// Immediately forces the appearance of the UI element into the specified state. Must be able to work without
+        /// initialization running first.
+        /// </summary>
+        /// <param name="state">The state we are setting.</param>
         protected abstract void ForceAppearance(InteractState state);
 
+        /// <summary>
+        /// Turn on a specified state. (The effects may not be immediately visible if they are overridden by a higher
+        /// priority state.)
+        /// </summary>
+        /// <param name="state">The state to turn on.</param>
+        /// <param name="immediate">Whether to change states immediately, with no animation.</param>
         protected abstract void TransitionOn(InteractState state, bool immediate);
 
+        /// <summary>
+        /// Turn off a specified state. (The effects may not be immediately visible if there is a higher priority state
+        /// overriding the effects of this state.)
+        /// </summary>
+        /// <param name="state">The state to turn off.</param>
+        /// <param name="immediate">Whether to change states immediately, with no animation.</param>
         protected abstract void TransitionOff(InteractState state, bool immediate);
         
         #endregion
@@ -337,6 +362,14 @@ namespace HiddenAchievement.CrossguardUi
             }
         }
         
-        
+        protected RectTransform FindComponent(string path)
+        {
+            if (string.IsNullOrEmpty(path))
+            {
+                return transform as RectTransform;
+            }
+            RectTransform component = transform.Find(path) as RectTransform;
+            return component;
+        }
     }
 }

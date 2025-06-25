@@ -524,7 +524,7 @@ namespace HiddenAchievement.CrossguardUi
                 return;
 
             // Get root Canvas.
-            var list = CrossListPool<Canvas>.Get();
+            var list = ListPool<Canvas>.Fetch();
             gameObject.GetComponentsInParent(false, list);
             if (list.Count == 0)
                 return;
@@ -539,7 +539,7 @@ namespace HiddenAchievement.CrossguardUi
                 }
             }
 
-            CrossListPool<Canvas>.Release(list);
+            ListPool<Canvas>.Return(list);
 
             if (!_validTemplate)
             {

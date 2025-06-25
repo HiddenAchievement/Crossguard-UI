@@ -2,6 +2,33 @@
 
 All notable end-user facing changes should be documented in this file.
 
+## [1.1.0] 2025-06-24
+
+### Changed
+
+- Replaced the old pools with some new ones.
+- Added more comments ton `AbstractTransitioner`.
+- Migrated `FindComponent` from `ColorAndScaleTransitioner` to `AbstractTransitioner` so it can be used by other
+  Transitioners.
+- `AbstractTransitioner.ClearStateFlag` now automatically skips the `Normal` state, so Transitioners don't need to do
+  this.
+
+### Added
+
+- Added the `ModularTransitioner`, which is a new transitioner that allows you to specify component appearance with
+  modular parts.
+- Added a starting set of modules:
+  - `Alpha (Renderer)` - Tweens the Alpha of the Canvas Renderer.
+  - `Color (RGB)` - Tweens the Color (but not Alpha) of the Canvas Renderer.
+  - `Color (RGBA)` - Tweens the Color and Alpha of the Canvas Renderer.
+  - `Position` - Tweens the anchoredPosition of the RectTransform.
+  - `Scale` - Tweens the Scale of the RectTransform.
+  - `Sprite` - Swaps the Sprite of an Image.
+
+### Fixed
+
+- `ColorAndScaleTransitioner` now sets up the Checked style correctly.
+
 ## [1.0.8] 2025-06-12
 
 ### Changed

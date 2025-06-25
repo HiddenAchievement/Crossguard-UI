@@ -48,7 +48,6 @@ namespace HiddenAchievement.CrossguardUi
             for (int i = 0; i < _states.Length; i++)
             {
                 EditorGUILayout.Space();
-                // EditorGUILayout.LabelField(_states[i].Item1, EditorStyles.boldLabel);
                 ReorderableListUtility.DoLayoutListWithFoldout(_lists[i]);
             }
 
