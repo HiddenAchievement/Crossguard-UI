@@ -57,11 +57,13 @@ namespace HiddenAchievement.CrossguardUi.Modules
         }
 
         /// <inheritdoc />
-        public void Transition(RectTransform component, IStyleModuleRule rule, float duration)
+        public void Transition(RectTransform component, IStyleModuleRule rule, float duration, Ease easing)
         {
             if (rule is not ColorRgbaRendererModuleRule colorRule) return;
             CanvasRenderer renderer = _componentCache[component];
-            _motionHandle = LMotion.Create(renderer.GetColor(), colorRule.Color, duration).BindToColor(renderer);
+            _motionHandle = LMotion.Create(renderer.GetColor(), colorRule.Color, duration)
+                .WithEase(easing)
+                .BindToColor(renderer);
         }
         
         /// <inheritdoc />

@@ -48,13 +48,15 @@ namespace HiddenAchievement.CrossguardUi.Modules
         }
 
         /// <inheritdoc />
-        public void Transition(RectTransform component, IStyleModuleRule rule, float duration)
+        public void Transition(RectTransform component, IStyleModuleRule rule, float duration, Ease easing)
         {
             if (rule is not ScaleModuleRule scaleRule) return;
             _motionHandle = LMotion.Create(
                 new Vector3(component.localScale.x, component.localScale.y, 1f),
                 new Vector3(scaleRule.Scale.x, scaleRule.Scale.y, 1f),
-                duration).BindToLocalScale(component);
+                duration)
+                .WithEase(easing)
+                .BindToLocalScale(component);
         }
 
         /// <inheritdoc />

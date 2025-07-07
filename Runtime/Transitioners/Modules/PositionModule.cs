@@ -48,10 +48,11 @@ namespace HiddenAchievement.CrossguardUi.Modules
         }
 
         /// <inheritdoc />
-        public void Transition(RectTransform component, IStyleModuleRule rule, float duration)
+        public void Transition(RectTransform component, IStyleModuleRule rule, float duration, Ease easing)
         {
             if (rule is not PositionModuleRule positionRule) return;
             _motionHandle = LMotion.Create(component.anchoredPosition, positionRule.Position, duration)
+                .WithEase(easing)
                 .BindToAnchoredPosition(component);
         }
 

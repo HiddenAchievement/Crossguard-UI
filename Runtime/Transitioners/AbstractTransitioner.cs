@@ -100,8 +100,6 @@ namespace HiddenAchievement.CrossguardUi
             _initialized = true;
         }
         
-        
-        
 #if UNITY_EDITOR
         protected void OnValidate()
         {
@@ -127,7 +125,7 @@ namespace HiddenAchievement.CrossguardUi
             }
         }
 
-#endif // if UNITY_EDITOR
+#endif // UNITY_EDITOR
         
         #endregion
         
@@ -360,16 +358,6 @@ namespace HiddenAchievement.CrossguardUi
                 return s_axisNavMode || _tabAfter || _tabBefore;
 #endif
             }
-        }
-        
-        protected RectTransform FindComponent(string path)
-        {
-            if (string.IsNullOrEmpty(path))
-            {
-                return transform as RectTransform;
-            }
-            RectTransform component = transform.Find(path) as RectTransform;
-            return component;
         }
     }
 }

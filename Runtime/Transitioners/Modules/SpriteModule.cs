@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using LitMotion;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -55,7 +56,7 @@ namespace HiddenAchievement.CrossguardUi.Modules
         }
 
         /// <inheritdoc />
-        public void Transition(RectTransform component, IStyleModuleRule rule, float duration)
+        public void Transition(RectTransform component, IStyleModuleRule rule, float duration, Ease _)
         {
             if (rule is not SpriteModuleRule spriteRule) return;
             Image image = _componentCache[component];

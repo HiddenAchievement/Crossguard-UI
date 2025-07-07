@@ -105,7 +105,7 @@ namespace HiddenAchievement.CrossguardUi
 
             if (info == null)
             {
-                RectTransform component = FindComponent(appearance.ComponentPath);
+                RectTransform component = UiUtilities.FindComponent(transform, appearance.ComponentPath);
                 if (component == null) return null;
 
                 info = new ComponentInfo
@@ -429,7 +429,7 @@ namespace HiddenAchievement.CrossguardUi
             for (int i = 0; i < appearances.Length; i++)
             {
                 ColorAndScaleStyleEntry appearance = appearances[i];
-                Component component = FindComponent(appearance.ComponentPath);
+                Component component = UiUtilities.FindComponent(transform, appearance.ComponentPath);
                 if (component == null) continue;
                 if (appearance.UseColor && appearance.UseAlpha)
                 {

@@ -2,6 +2,20 @@
 
 All notable end-user facing changes should be documented in this file.
 
+
+## [1.1.1] 2025-07-07
+
+### Changed
+
+- Pulled modular transition logic into a `ModularTransitionManager` that can be used by more than one thing.
+
+### Added
+
+- Added the `OmniTransitioner` MonoBehaviour, which can be used to transition visual states on a non-Selectable.
+- Added `OmniTransitionerState`. You can add as many of these as you want to an `OmniTransitioner` to define the states
+  that it will use.
+
+
 ## [1.1.0] 2025-06-24
 
 ### Changed

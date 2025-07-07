@@ -1,3 +1,4 @@
+using LitMotion;
 using UnityEngine;
 
 namespace HiddenAchievement.CrossguardUi.Modules
@@ -41,6 +42,7 @@ namespace HiddenAchievement.CrossguardUi.Modules
         /// <param name="component">The component being changed.</param>
         /// <param name="rule">The rule to apply.</param>
         /// <param name="duration">The amount of time the transition should take</param>
-        void Transition(RectTransform component, IStyleModuleRule rule, float duration);
+        /// <param name="easing">The easing to use for the transition.</param>
+        void Transition(RectTransform component, IStyleModuleRule rule, float duration, Ease easing);
     }
 }
