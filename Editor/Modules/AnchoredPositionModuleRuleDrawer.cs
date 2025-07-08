@@ -3,8 +3,8 @@ using UnityEngine;
 
 namespace HiddenAchievement.CrossguardUi.Modules
 {
-    [CustomPropertyDrawer(typeof(PositionModuleRule))]
-    public class PositionModuleRuleDrawer : PropertyDrawer
+    [CustomPropertyDrawer(typeof(AnchoredPositionModuleRule))]
+    public class AnchoredPositionModuleRuleDrawer : PropertyDrawer
     {
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {

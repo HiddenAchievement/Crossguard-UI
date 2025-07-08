@@ -75,13 +75,13 @@ namespace HiddenAchievement.CrossguardUi
             return new Rect(topLeft, new Vector2(bottomRight.x - topLeft.x, bottomRight.y - topLeft.y));
         }
         
-        public static RectTransform FindComponent(Transform transform, string path)
+        public static Transform FindComponent(Transform transform, string path)
         {
             if (string.IsNullOrEmpty(path))
             {
-                return transform as RectTransform;
+                return transform;
             }
-            return transform.Find(path) as RectTransform;;
+            return transform.Find(path);
         }
     }
 }

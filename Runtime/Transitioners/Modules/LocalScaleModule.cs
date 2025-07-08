@@ -4,13 +4,13 @@ using UnityEngine;
 
 namespace HiddenAchievement.CrossguardUi.Modules
 {
-    public class ScaleModule : IStyleModule
+    public class LocalScaleModule : IStyleModule
     {
-        private static readonly CrossInstancePool<ScaleModule> s_pool = new(() => new ScaleModule());
+        private static readonly CrossInstancePool<LocalScaleModule> s_pool = new(() => new LocalScaleModule());
 
         private MotionHandle _motionHandle = MotionHandle.None;
         
-        public static ScaleModule Create()
+        public static LocalScaleModule Create()
         {
             return s_pool.Fetch();
         }
@@ -22,39 +22,36 @@ namespace HiddenAchievement.CrossguardUi.Modules
         }
 
         /// <inheritdoc />
-        public void CacheComponent(RectTransform component)
+        public void CacheComponent(Transform component)
         {
             // We just need the transform, so there's nothing to cache.
         }
 
         /// <inheritdoc />
-        public void ClearComponent(RectTransform component)
+        public void ClearComponent(Transform component)
         {
             component.localScale = Vector3.one;
         }
 
         /// <inheritdoc />
-        public void ForceComponentRule(RectTransform component, IStyleModuleRule rule)
+        public void ForceComponentRule(Transform component, IStyleModuleRule rule)
         {
-            if (rule is not ScaleModuleRule scaleRule) return;
+            if (rule is not LocalScaleModuleRule scaleRule) return;
             component.localScale = new Vector3(scaleRule.Scale.x, scaleRule.Scale.y, 1);
         }
 
         /// <inheritdoc />
-        public void Transition(RectTransform component, IStyleModuleRule rule)
+        public void Transition(Transform component, IStyleModuleRule rule)
         {
-            if (rule is not ScaleModuleRule scaleRule) return;
+            if (rule is not LocalScaleModuleRule scaleRule) return;
             component.localScale = new Vector3(scaleRule.Scale.x, scaleRule.Scale.y, 1);
         }
 
         /// <inheritdoc />
-        public void Transition(RectTransform component, IStyleModuleRule rule, float duration, Ease easing)
+        public void Transition(Transform component, IStyleModuleRule rule, float duration, Ease easing)
         {
-            if (rule is not ScaleModuleRule scaleRule) return;
-            _motionHandle = LMotion.Create(
-                new Vector3(component.localScale.x, component.localScale.y, 1f),
-                new Vector3(scaleRule.Scale.x, scaleRule.Scale.y, 1f),
-                duration)
+            if (rule is not LocalScaleModuleRule scaleRule) return;
+            _motionHandle = LMotion.Create(component.localScale, scaleRule.Scale, duration)
                 .WithEase(easing)
                 .BindToLocalScale(component);
         }
@@ -74,7 +71,7 @@ namespace HiddenAchievement.CrossguardUi.Modules
             _motionHandle = MotionHandle.None;
         }
         
-        private ScaleModule()
+        private LocalScaleModule()
         {
         }
     }

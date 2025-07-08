@@ -7,7 +7,7 @@ namespace HiddenAchievement.CrossguardUi.Modules
     public class AlphaRendererModule : IStyleModule
     {
         private static readonly CrossInstancePool<AlphaRendererModule> s_pool = new(() => new AlphaRendererModule());
-        private readonly Dictionary<RectTransform, CanvasRenderer> _componentCache = new();
+        private readonly Dictionary<Transform, CanvasRenderer> _componentCache = new();
 
         private MotionHandle _motionHandle = MotionHandle.None;
         
@@ -23,7 +23,7 @@ namespace HiddenAchievement.CrossguardUi.Modules
         }
 
         /// <inheritdoc />
-        public void CacheComponent(RectTransform component)
+        public void CacheComponent(Transform component)
         {
             CanvasRenderer renderer = component.GetComponent<CanvasRenderer>();
             Debug.Assert(renderer != null);
@@ -31,27 +31,27 @@ namespace HiddenAchievement.CrossguardUi.Modules
         }
 
         /// <inheritdoc />
-        public void ClearComponent(RectTransform component)
+        public void ClearComponent(Transform component)
         {
             SetOnlyAlpha(component.GetComponent<CanvasRenderer>(), 1);
         }
 
         /// <inheritdoc />
-        public void ForceComponentRule(RectTransform component, IStyleModuleRule rule)
+        public void ForceComponentRule(Transform component, IStyleModuleRule rule)
         {
             if (rule is not AlphaRendererModuleRule alphaRule) return;
             SetOnlyAlpha(component.GetComponent<CanvasRenderer>(), alphaRule.Alpha);
         }
 
         /// <inheritdoc />
-        public void Transition(RectTransform component, IStyleModuleRule rule)
+        public void Transition(Transform component, IStyleModuleRule rule)
         {
             if (rule is not AlphaRendererModuleRule alphaRule) return;
             SetOnlyAlpha(_componentCache[component], alphaRule.Alpha);
         }
 
         /// <inheritdoc />
-        public void Transition(RectTransform component, IStyleModuleRule rule, float duration, Ease easing)
+        public void Transition(Transform component, IStyleModuleRule rule, float duration, Ease easing)
         {
             if (rule is not AlphaRendererModuleRule alphaRule) return;
             CanvasRenderer renderer = _componentCache[component];

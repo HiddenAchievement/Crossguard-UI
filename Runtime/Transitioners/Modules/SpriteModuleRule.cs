@@ -4,7 +4,7 @@ using UnityEngine;
 namespace HiddenAchievement.CrossguardUi.Modules
 {
     [Serializable]
-    [StyleModuleRule("Sprite")]
+    [StyleModuleRule("Image/Sprite")]
     public class SpriteModuleRule : IStyleModuleRule
     {
         public Sprite Sprite;

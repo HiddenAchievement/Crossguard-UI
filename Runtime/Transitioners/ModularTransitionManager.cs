@@ -37,12 +37,12 @@ namespace HiddenAchievement.CrossguardUi
 
         private class ComponentData : IResettable
         {
-            public RectTransform RectTransform;
+            public Transform Transform;
             public readonly List<ModuleSettings> Settings = new();
 
             public void Reset()
             {
-                RectTransform = null;
+                Transform = null;
                 for (int i = 0; i < Settings.Count; i++)
                 {
                     s_moduleSettingsPool.Return(Settings[i]);
@@ -123,9 +123,13 @@ namespace HiddenAchievement.CrossguardUi
                 string path = entries[i].ComponentPath;
                 if (!s_componentTable.TryGetValue(path, out var componentData))
                 {
-                    RectTransform rectTransform = UiUtilities.FindComponent(_transform, path);
+                    Transform transform = UiUtilities.FindComponent(_transform, path);
+                    if (transform == null)
+                    {
+                        Debug.LogError($"ModularTransitionManager: Cannot process state {state}. No transform found at path \"{path}\"");
+                    }
                     componentData = s_componentDataPool.Fetch();
-                    componentData.RectTransform = rectTransform;
+                    componentData.Transform = transform;
                     s_componentTable.Add(path, componentData);
                 }
                 ProcessStyleEntry(state, entries[i], componentData);
@@ -139,7 +143,7 @@ namespace HiddenAchievement.CrossguardUi
                 IStyleModuleRule rule = entry.Style[i];
                 ModuleSettings settings = GetModuleSettingsForRule(rule, componentData);
                 settings.StyleRules[state] = rule;
-                settings.Module.CacheComponent(componentData.RectTransform);
+                settings.Module.CacheComponent(componentData.Transform);
             }
         }
 
@@ -184,12 +188,16 @@ namespace HiddenAchievement.CrossguardUi
             if (styleEntries == null) return;
             foreach (ModularStyleEntry entry in styleEntries)
             {
-                RectTransform rectTransform = UiUtilities.FindComponent(transform, entry.ComponentPath);
-                if (rectTransform == null) continue;
+                Transform componentTransform = UiUtilities.FindComponent(transform, entry.ComponentPath);
+                if (componentTransform == null) continue;
                 foreach (var rule in entry.Style)
                 {
+                    if (rule == null)
+                    {
+                        Debug.LogError($"Missing rule in style for {componentTransform}", transform.gameObject);
+                    }
                     IStyleModule module = rule.GetModuleInstance();
-                    module.ClearComponent(rectTransform);
+                    module.ClearComponent(componentTransform);
                     module.Free();
                 }
             }
@@ -208,12 +216,12 @@ namespace HiddenAchievement.CrossguardUi
             
             foreach (ModularStyleEntry entry in styleEntries)
             {
-                RectTransform rectTransform = UiUtilities.FindComponent(transform, entry.ComponentPath);
-                if (rectTransform == null) continue;
+                Transform componentTransform = UiUtilities.FindComponent(transform, entry.ComponentPath);
+                if (componentTransform == null) continue;
                 foreach (var rule in entry.Style)
                 {
                     IStyleModule module = rule.GetModuleInstance();
-                    module.ForceComponentRule(rectTransform, rule);
+                    module.ForceComponentRule(componentTransform, rule);
                     module.Free();
                 }
             }
@@ -235,7 +243,7 @@ namespace HiddenAchievement.CrossguardUi
                 ComponentData componentData = _componentData[i];
                 for (int j = 0; j < componentData.Settings.Count; j++)
                 {
-                    TransitionOn(state, immediate, componentData.RectTransform, componentData.Settings[j], easing);
+                    TransitionOn(state, immediate, componentData.Transform, componentData.Settings[j], easing);
                 }
             }
         }
@@ -257,12 +265,12 @@ namespace HiddenAchievement.CrossguardUi
                 ComponentData componentData = _componentData[i];
                 for (int j = 0; j < componentData.Settings.Count; j++)
                 {
-                    TransitionOff(state, immediate, componentData.RectTransform, componentData.Settings[j], stateFlags, easing);
+                    TransitionOff(state, immediate, componentData.Transform, componentData.Settings[j], stateFlags, easing);
                 }
             }
         }
         
-        private void TransitionOn(int state, bool immediate, RectTransform component, ModuleSettings settings, Ease easing)
+        private void TransitionOn(int state, bool immediate, Transform component, ModuleSettings settings, Ease easing)
         {
             // Check to see if state priority currently overrules any transition from this module on this component.
             if (state <= settings.ActiveState && !_mutuallyExclusive) return;
@@ -290,7 +298,7 @@ namespace HiddenAchievement.CrossguardUi
             TransitionComponentByRule(component, settings.Module, rule, immediate, easing);
         }
         
-        private void TransitionOff(int state, bool immediate, RectTransform component, ModuleSettings settings, BitArray stateFlags, Ease easing)
+        private void TransitionOff(int state, bool immediate, Transform component, ModuleSettings settings, BitArray stateFlags, Ease easing)
         {
             // Check to see if state priority currently overrules any transition from this module on this component.
             if (state != settings.ActiveState) return;
@@ -316,7 +324,7 @@ namespace HiddenAchievement.CrossguardUi
             TransitionComponentByRule(component, settings.Module, rule, immediate, easing);
         }
 
-        private void TransitionComponentByRule(RectTransform component, IStyleModule module, IStyleModuleRule rule,
+        private void TransitionComponentByRule(Transform component, IStyleModule module, IStyleModuleRule rule,
             bool immediate, Ease easing)
         {
             if (immediate)

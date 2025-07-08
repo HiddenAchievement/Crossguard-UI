@@ -105,13 +105,13 @@ namespace HiddenAchievement.CrossguardUi
 
             if (info == null)
             {
-                RectTransform component = UiUtilities.FindComponent(transform, appearance.ComponentPath);
+                Transform component = UiUtilities.FindComponent(transform, appearance.ComponentPath);
                 if (component == null) return null;
 
                 info = new ComponentInfo
                 {
                     Path = appearance.ComponentPath,
-                    Component = component,
+                    Component = (RectTransform)component,
                     Renderer = component.GetComponent<CanvasRenderer>(),
                     // Graphic = component.GetComponent<Graphic>()
                 };

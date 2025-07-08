@@ -10,7 +10,7 @@ namespace HiddenAchievement.CrossguardUi.Modules
     public class ColorRgbRendererModule : IStyleModule
     {
         private static readonly CrossInstancePool<ColorRgbRendererModule> s_pool = new(() => new ColorRgbRendererModule());
-        private readonly Dictionary<RectTransform, CanvasRenderer> _componentCache = new();
+        private readonly Dictionary<Transform, CanvasRenderer> _componentCache = new();
         
         private MotionHandle _motionHandle = MotionHandle.None;
         
@@ -26,7 +26,7 @@ namespace HiddenAchievement.CrossguardUi.Modules
         }
         
         /// <inheritdoc />
-        public void CacheComponent(RectTransform component)
+        public void CacheComponent(Transform component)
         {
             CanvasRenderer renderer = component.GetComponent<CanvasRenderer>();
             Debug.Assert(renderer != null);
@@ -34,26 +34,26 @@ namespace HiddenAchievement.CrossguardUi.Modules
         }
         
         /// <inheritdoc />
-        public void ClearComponent(RectTransform component)
+        public void ClearComponent(Transform component)
         {
             SetOnlyRgb(component.GetComponent<CanvasRenderer>(), Color.white);
         }
 
-        public void ForceComponentRule(RectTransform component, IStyleModuleRule rule)
+        public void ForceComponentRule(Transform component, IStyleModuleRule rule)
         {
             if (rule is not ColorRgbRendererModuleRule colorRule) return;
             SetOnlyRgb(component.GetComponent<CanvasRenderer>(), colorRule.Color);
         }
         
         /// <inheritdoc />
-        public void Transition(RectTransform component, IStyleModuleRule rule)
+        public void Transition(Transform component, IStyleModuleRule rule)
         {
             if (rule is not ColorRgbRendererModuleRule colorRule) return;
             SetOnlyRgb(_componentCache[component], colorRule.Color);
         }
 
         /// <inheritdoc />
-        public void Transition(RectTransform component, IStyleModuleRule rule, float duration, Ease easing)
+        public void Transition(Transform component, IStyleModuleRule rule, float duration, Ease easing)
         {
             if (rule is not ColorRgbRendererModuleRule colorRule) return;
             CanvasRenderer renderer = _componentCache[component];

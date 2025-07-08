@@ -2,6 +2,23 @@
 
 All notable end-user facing changes should be documented in this file.
 
+## [1.1.2] 2025-07-07
+
+### Changed
+
+- Module components are now tracked by Transform, rather than RectTransform. This allows us to potentially use the
+  OmniTransitioner for things that are not UI elements.
+- Renamed some modules to better fit their specific role.
+- Reorganized some modules.
+
+### Added
+
+- Local Rotation Module
+- Image Fill Module
+- Pivot Module
+- Anchor Min Module
+- Anchor Max Module
+- Alpha Canvas Group Module
 
 ## [1.1.1] 2025-07-07
 

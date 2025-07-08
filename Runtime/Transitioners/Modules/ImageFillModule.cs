@@ -1,17 +1,19 @@
 using System.Collections.Generic;
 using LitMotion;
+using LitMotion.Extensions;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace HiddenAchievement.CrossguardUi.Modules
 {
-    public class ColorRgbaRendererModule : IStyleModule
+    public class ImageFillModule : IStyleModule
     {
-        private static readonly CrossInstancePool<ColorRgbaRendererModule> s_pool = new(() => new ColorRgbaRendererModule());
-        private readonly Dictionary<Transform, CanvasRenderer> _componentCache = new();
-        
+        private static readonly CrossInstancePool<ImageFillModule> s_pool = new(() => new ImageFillModule());
+        private readonly Dictionary<Transform, Image> _componentCache = new();
+
         private MotionHandle _motionHandle = MotionHandle.None;
         
-        public static ColorRgbaRendererModule Create()
+        public static ImageFillModule Create()
         {
             return s_pool.Fetch();
         }
@@ -25,45 +27,45 @@ namespace HiddenAchievement.CrossguardUi.Modules
         /// <inheritdoc />
         public void CacheComponent(Transform component)
         {
-            CanvasRenderer renderer = component.GetComponent<CanvasRenderer>();
-            Debug.Assert(renderer != null);
-            _componentCache[component] = renderer;
+            Image image = component.GetComponent<Image>();
+            Debug.Assert(image != null);
+            _componentCache[component] = image;
         }
         
         /// <inheritdoc />
         public void ClearComponent(Transform component)
         {
-            CanvasRenderer renderer = component.GetComponent<CanvasRenderer>();
-            if (renderer == null) return;
-            renderer.SetColor(Color.white);
+            Image image = component.GetComponent<Image>();
+            if (image == null) return;
+            image.fillAmount = 1;
         }
         
         /// <inheritdoc />
         public void ForceComponentRule(Transform component, IStyleModuleRule rule)
         {
-            if (rule is not ColorRgbaRendererModuleRule colorRule) return;
-            CanvasRenderer renderer = component.GetComponent<CanvasRenderer>();
-            if (renderer == null) return;
-            renderer.SetColor(colorRule.Color);
+            if (rule is not ImageFillModuleRule fillRule) return;
+            Image image = component.GetComponent<Image>();
+            if (image == null) return;
+            image.fillAmount = fillRule.Fill;
         }
         
         /// <inheritdoc />
         public void Transition(Transform component, IStyleModuleRule rule)
         {
-            if (rule is not ColorRgbaRendererModuleRule colorRule) return;
-            CanvasRenderer renderer = _componentCache[component];
-            if (renderer == null) return;
-            renderer.SetColor(colorRule.Color);
+            if (rule is not ImageFillModuleRule fillRule) return;
+            Image image = _componentCache[component];
+            if (image == null) return;
+            image.fillAmount = fillRule.Fill;
         }
 
         /// <inheritdoc />
         public void Transition(Transform component, IStyleModuleRule rule, float duration, Ease easing)
         {
-            if (rule is not ColorRgbaRendererModuleRule colorRule) return;
-            CanvasRenderer renderer = _componentCache[component];
-            _motionHandle = LMotion.Create(renderer.GetColor(), colorRule.Color, duration)
+            if (rule is not ImageFillModuleRule fillRule) return;
+            Image image = _componentCache[component];
+            _motionHandle = LMotion.Create(image.fillAmount, fillRule.Fill, duration)
                 .WithEase(easing)
-                .BindToColor(renderer);
+                .BindToFillAmount(image);
         }
         
         /// <inheritdoc />
@@ -82,7 +84,7 @@ namespace HiddenAchievement.CrossguardUi.Modules
             _motionHandle = MotionHandle.None;
         }
         
-        private ColorRgbaRendererModule()
+        private ImageFillModule()
         {}
     }
 }

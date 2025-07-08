@@ -25,14 +25,6 @@ namespace HiddenAchievement.CrossguardUi
         
         private void Awake()
         {
-            _states = GetComponentsInChildren<OmniTransitionerState>();
-            _stateFlags = new BitArray(_states.Length);
-            _stateStyles = new ModularStyleEntry[_states.Length][];
-            for (int i = 0; i < _states.Length; i++)
-            {
-                _stateStyles[i] = _states[i].Style;
-            }
-            
             Initialize();
         }
 
@@ -191,6 +183,14 @@ namespace HiddenAchievement.CrossguardUi
             if (!Application.isPlaying) return;
             if (_initialized) return;
             
+            _states = GetComponentsInChildren<OmniTransitionerState>();
+            _stateFlags  = new BitArray(_states.Length);
+            _stateStyles = new ModularStyleEntry[_states.Length][];
+            for (int i = 0; i < _states.Length; i++)
+            {
+                _stateStyles[i] = _states[i].Style;
+            }
+            
             InitializeStates();
             
             _lastState = 0;
@@ -220,7 +220,7 @@ namespace HiddenAchievement.CrossguardUi
             }
             
             _stateFlags[flag] = true;
-
+            
             if (!_initialized) return;
 
             TransitionOn(flag, immediate || !gameObject.activeInHierarchy);

@@ -4,7 +4,7 @@ using UnityEngine;
 namespace HiddenAchievement.CrossguardUi.Modules
 {
     [Serializable]
-    [StyleModuleRule("Color (RGBA)")]
+    [StyleModuleRule("CanvasRenderer/Color (RGBA)")]
     public class ColorRgbaRendererModuleRule : IStyleModuleRule
     {
         public Color Color;

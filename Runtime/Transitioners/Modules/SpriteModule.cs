@@ -8,7 +8,7 @@ namespace HiddenAchievement.CrossguardUi.Modules
     public class SpriteModule : IStyleModule
     {
         private static readonly CrossInstancePool<SpriteModule> s_pool = new(() => new SpriteModule());
-        private readonly Dictionary<RectTransform, Image> _componentCache = new();
+        private readonly Dictionary<Transform, Image> _componentCache = new();
         
         public static SpriteModule Create()
         {
@@ -22,7 +22,7 @@ namespace HiddenAchievement.CrossguardUi.Modules
         }
         
         /// <inheritdoc />
-        public void CacheComponent(RectTransform component)
+        public void CacheComponent(Transform component)
         {
             Image image =  component.GetComponent<Image>();
             Debug.Assert(image != null);
@@ -30,7 +30,7 @@ namespace HiddenAchievement.CrossguardUi.Modules
         }
 
         /// <inheritdoc />
-        public void ClearComponent(RectTransform component)
+        public void ClearComponent(Transform component)
         {
             Image image = component.GetComponent<Image>();
             if (image == null) return;
@@ -38,7 +38,7 @@ namespace HiddenAchievement.CrossguardUi.Modules
         }
 
         /// <inheritdoc />
-        public void ForceComponentRule(RectTransform component, IStyleModuleRule rule)
+        public void ForceComponentRule(Transform component, IStyleModuleRule rule)
         {
             if (rule is not SpriteModuleRule spriteRule) return;
             Image image = component.GetComponent<Image>();
@@ -47,7 +47,7 @@ namespace HiddenAchievement.CrossguardUi.Modules
         }
         
         /// <inheritdoc />
-        public void Transition(RectTransform component, IStyleModuleRule rule)
+        public void Transition(Transform component, IStyleModuleRule rule)
         {
             if (rule is not SpriteModuleRule spriteRule) return;
             Image image = component.GetComponent<Image>();
@@ -56,7 +56,7 @@ namespace HiddenAchievement.CrossguardUi.Modules
         }
 
         /// <inheritdoc />
-        public void Transition(RectTransform component, IStyleModuleRule rule, float duration, Ease _)
+        public void Transition(Transform component, IStyleModuleRule rule, float duration, Ease _)
         {
             if (rule is not SpriteModuleRule spriteRule) return;
             Image image = _componentCache[component];
