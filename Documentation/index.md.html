@@ -85,7 +85,6 @@ Gamepad Prompts section.
 The `Crossguard UI Test` project is handy for regression-testing Crossguard
 features.
 
-
 # State System
 
 Crossguard UI features a new, more sophisticated UI element state system.  The
@@ -97,13 +96,13 @@ Highlighted, at the same time.
 
 The new states are as follows:
 
-* Normal
-* Highlighted
-* Selected
-* Pressed
-* Isolated
-* Checked
-* Disabled
+* **Normal** - The default state, which is always active.
+* **Highlighted** - The state when the mouse is over the element.
+* **Selected** - The state when an element is tab selected or game-controller selected.
+* **Pressed** - The state when a mouse or finger is presssing the element.
+* **Isolated** - The state when this element is isolated, such that it receives all navigation controls or typing.
+* **Checked** - The state when this element is toggled on.
+* **Disabled** - The state when this element cannot be interacted with.
 
 ## Order of Precedence
 
@@ -117,6 +116,11 @@ For instance, if you're using the Color and Scale Transitioner, and your
 change it to a different color, while the button is disabled.  When a state is
 turned off, all of the elements that it modified will rise back up the list to
 the first active state that has modifications for them.
+
+So, you can think of these states as layers, in a way. When you turn a state on,
+its changes apply on top of the changes in the states further up the list. The
+`Normal` state is always active, and should contain settings for every setting
+that is changed in other states.
 
 ## The Isolated State
 
@@ -371,6 +375,23 @@ Axis Control to function. Moreover, you probably _do not_ want to drive any
 changes to these buttons from the Transitioner on the Axis Control, because
 they might interfere with the Transitioner on the buttons, themselves.
 
+# Layout Helpers
+
+Crossguard includes two MonoBehaviours to help with common layout needs:
+
+## MultiAxisContentSizeFitter
+
+This is an alternate version of ContentSizeFitter that can be configured to grow in one direction, up to a maximum,
+and then grow in the other direction. This is useful for boxes (such as alerts) that need to be fitted to a string,
+but which will look bad if they are at full width with a short string inside of them.
+
+## ShrinkwrapLayoutElement
+
+Normally, in UGUI, if you want to make a button fit to the string inside of it, you need to use a `HorizontalLayoutGroup`
+or `VerticalLayoutGroup` to accomplish this. This is somewhat silly, since those are really designed for laying out
+a collection of children. `ShrinkwrapLayoutElement` provides a more fit-to-purpose way to accomplish this goal. Simply
+use it in place of the layout group, assign the Content field, set your padding, and it should do the job.
+
 # Transitioners
 
 Crossguard uses its own transition system, instead of the built-in transitions
@@ -390,7 +411,7 @@ Common properties across derivatives include:
 * `Select on Enable` -- This indicates that this item should be selected, when
   it is enabled.  This is only used when we are axis-navigating, or when an
   element is in a tab-navigation scenario.
-* `Seletion Indicator` -- This is the object (if any) that should be used as
+* `Selection Indicator` -- This is the object (if any) that should be used as
   the Selection Indicator for this element, when in an axis-navigation
   situation.  See the Selection Indicator section for more on this.
 
@@ -453,70 +474,43 @@ effectively multiplied by the base color of the Graphic which is being changed.
 In light of this, it's a good idea to leave objects white, if you intend
 to control their color with the Transitioner.
 
+### Modular
+
+![](images/modular_transitioner.png)
+
+This is a newer, more sophisticated transitioner that allows you to employ a
+broad variety of modular rules to define the appearance of a state.
+
+Similar to the Color and Scale Transitioner, the Modular Transitioner uses a
+style that is described in a Scriptable Object.
+
+#### Modular Style
+
+To create a new Style for your Transitioner, to go to
+`Assets > Create > Crossguard UI > Modular Style` (or use the project hierarchy
+context menu). Then, assign your new Style to the `Style` field in your
+component.
+
+![](images/modular_style.png)
+
+This works similarly to the Color and Scale Style, where you provide paths to
+components, and then describe what that component looks like. It is far less
+compact than the Color and Scale Style, but the tradeoff is that you have a much
+wider array of rules available to you. You can even add your own modules,
+if what you need isn't supported.
+
+Please see the [Modules](#toc11) section below, to learn more about what modules
+are available, and how to create your own.
+
 ### Simple Sprite Swap
 
 ![](images/simple_sprite_swap.png)
 
-
-The Simple Sprite Swap transitioner works similarly to Unity's Sprite Swap
-transition.  Each [state](#statesystem) has one Sprite associated with it,
-and this is assigned to the `Target` image.  This Transitioner strictly
-follows the rules of [precedence](#orderofprecedence) outlined in the
-State System section.
-
-### Animation
-
-![](images/animation_transitioner.png)
-
-Sometimes, you still need to do something that isn't supported by your other
-Transitioners.  In that case, you can still fall back on an Animator-based
-Transitioner.  This Transitioner is far less opinionated than the Unity
-Animation Transitioner, but the tradeoff for that freedom is that it requires
-some advanced knowledge to use.
-
-To set up an Animation Transitioner, you'll need to assign the `Animator`
-field to an Animator in your hierarchy (it doesn't have to be your element
-root, but it usually will be).  You should also set a `Transition Time` that
-approximates the state transition times you're going to use in your
-animation state machine.  (This is used for animating button-presses that
-are triggered by function calls, rather than by a mouse-click.)
-
-Whereas Unity's Animation transitions set triggers, upon entering the various
-Selectable states, Crossguard sets booleans for this.  In your Animator panel,
-you should set up your Paramters, like this, with a boolean for each state:
-
-![](images/animator_parameters.png)
-
-(You may safely skip any state that isn't used by this element.)
-
-If you want to keep things simple, you can create separate layers for each
-of the states that you're using, like this:
-
-![](images/animator_layers.png)
-
-(I skipped the `Isolated` state, because I wasn't using it for this element.)
-
-The order matters here -- layers lower in the list take precedence over
-layers higher in the list.  So, if you want to reproduce the
-order-of-precedence used [elsewhere in Crossguard](#orderofprecedence), you
-need only list these layers in the same order.
-
-In most cases, your `Normal` state can be as simple as this:
-
-![](images/animator_normal_state.png)
-
-And for the other states, you can start out with something like this:
-
-![](images/animator_other_states.png)
-
-Use the boolean flag for that state to trigger those transitions.
-
-![](images/animator_conditions.png)
-
-And make sure to turn off the `Exit Time` on your transitions.
-
-When you get the hang of it, you can do more sophisticated things, if you
-want to, but you might never need to, because the above is pretty expressive.
+The Simple Sprite Swap transitioner is an example transitioner that works
+similarly to Unity's Sprite Swap transition.  Each [state](#statesystem)
+has one Sprite associated with it, and this is assigned to the `Target`
+image.  This Transitioner strictly follows the rules of
+[precedence](#orderofprecedence) outlined in the State System section.
 
 ## Adding New Transitioners
 
@@ -758,6 +752,319 @@ load in the new prompt art.
 `QuickAndDirtyTokenProvider.cs` in the test project demonstrates this, in the
 `UpdateTokenMap()` function.
 
+# Omni Transitioner
+
+![](images/omni_transitioner.png)
+
+The Omni Transitioner isn't in the Transitioners section, because this is an
+entirely different sort of thing. Instead of being intended for use with
+Selectable components, it can be used with _any_ UI component (and possibly
+even non-UI GameObjects, in some instances). Instead of using the stock
+set of states available for the other Transitioners, the Omni Transitioner
+allows you to define your own bespoke states. It is compatible with the same
+modular rules that are used by the Modular Transitioner, so you have a
+wide variety of things you can do with it.
+
+Example use-cases for the Omni Transitioner might be slide-out panels,
+toasts that pop in from an edge of the screen, or dialogs that expand or fade
+in.
+
+To use the Omni Transitioner, simply add an Omni Transitioner MonoBehaviour,
+fill in the settings, and then add an Omni Transitioner State for each state
+you'd like to support. States are described in the same manner as the Modular
+Transitioner, except that you also have the ability to provide a name for
+your state, and an Easing setting.
+
+To change these states, there are a variety of public functions. If you have
+only two states, you can set them with boolean values, and if you have more than
+two, you can set them with an integer value.
+
+# Transitioner Modules
+
+CrossguardUI includes a large variety of Transitioner Moodules, which can be used with the Modular Transitioner and the
+Omni Transitioner. You can also add new ones. They are generally categories by what type of MonoBehaviour they act
+on.
+
+![Toplevel module categories](images/toplevel_module_categories.png)
+
+## Canvas Group Modules
+
+### Alpha
+
+Specifies the alpha value on a Canvas Group, so that you can fade a GameObject and all of its children in or
+out at the same time. Value should be in the 0-1 range.
+
+## Canvas Renderer Modules
+
+### Alpha
+
+Specifies the alpha on a single Canvas Renderer (typically a GameObject with an Image, RawImage, or
+TextMeshProUGUI), so that you can fade it in or out. Value should be in the 0-1 range.
+
+### Color RGB
+
+Specifies the color of a single Canvas Renderer (typically a GameObject with an Image, RawImage, or
+TextMeshProUGUI). It ignores the alpha values on the colors provided. The color will be multiplied with any sprites
+or colors already defined on the GameObject.
+
+### Color RGBA
+
+Specifies the color and alpha of a single Canvas Renderer (typically a GameObject with an Image, RawImage, or
+TextMeshProUGUI). The color will be multiplied with any sprites or colors already defined on the GameObject.
+
+## Image Modules
+
+### Fill
+
+Specifies the Fill Amount for an Image that has been set to the Filled image type. Value should be in the 0-1 range.
+
+### Sprite
+
+Specifies the sprite assigned to a given Image. This happens immediately, regardless of the transition duration. However,
+we're considering adding data to the rule so that you can specify how far through the transition the image should be
+swapped.
+
+## Transform Modules
+
+### Local Rotation
+
+Specifies the Local Rotation of the object Transform. This is defined as an Euler angle rotations in degrees. When using
+this with UI elements, the you will usually be rotating around the Z-axis, and rotation will occur around the current
+RectTransform Pivot.
+
+### Local Scale
+
+Specifies the Local Scale of the object Transform. For UI elements, scaling will us ethe current Pivot as the scaling
+anchor. For instance, if your pivot is on the left side of a button, and you scale it up, it will scale rightward.
+
+## RectTransform Modules
+
+### Anchored Position
+
+Specifies the Anchored Position of the RectTransform.
+
+### Anchor Min
+
+Specifies the Anchor Min (x, y) of the RectTransform. This can be useful for moving things without knowing absolute
+distances.
+
+### Anchor Max
+
+Specifies the Anchor Max (x, y) of the RectTransform. This can be useful for moving things without knowing
+absolute distances. It can also be used for growing something from a side or upper corner.
+
+### Pivot
+
+Specifies the Pivot of the RectTransform. This is incredibly useful for making elements slide out of the sides
+of the screen, or out from behind other elements, though it can also be used for small slides and wiggles, and a
+variety of other effects.
+
+## Custom Modules
+
+Every Module is defined by three parts: The Module, the ModuleRule, and the ModuleRuleDrawer. Once you've defined
+all three files, you have everything you need to use your new Module.
+
+To demonstrate how this works, let's invent a Module for changing the UV position of a Raw Image. Well call this the
+RawImageUvModule.
+
+First, we should make `RawImageUvPositionModule.cs` and `RawImageUvPositionModuleRule.cs`.
+
+The Module file describes the logic that performs the transition, and the Rule file describes the data that will be
+used to define transition target, and also a little bit of factory logic for providing Crossguard with a Module, to
+act on that data.
+
+Here's our `RawImageUvPositionModule.cs`:
+
+```cs
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.UI;
+using LitMotion;
+using HiddenAchievement.CrossguardUi;
+using HiddenAchievement.CrossguardUi.Modules;
+
+namespace MyApplicationDomain
+{
+    public class RawImageUvPositionModule : IStyleModule
+    {
+        // We usually pool these modules, to reduce allocations.
+        private static readonly CrossInstancePool&lt;RawImageUvPositionModule&gt; s_pool =
+            new(() => new RawImageUvPositionModule());
+    
+        private readonly Dictionary&lt;Transform, RawImage&gt; _componentCache = new();
+    
+        // This is a LitMotion handle, which we can use to cancel our animation.
+        private MotionHandle _motionHandle = MotionHandle.None;
+    
+        public static RawImageUvPositionModule Create()
+        {
+        // This creates a new module by fetching from our pool.
+        return s_pool.Fetch();
+        }
+    
+        /// &lt;inheritdoc /&gt;
+        public void Free()
+        {
+        // This frees our module by returning it to the pool.
+        s_pool.Return(this);
+        }
+    
+        /// &lt;inheritdoc /&gt;
+        public void CacheComponent(Transform component)
+        {
+            // We cache our RawImage components, so we don't need to look them up
+            // constantly.
+            RawImage image = component.GetComponent&lt;RawImage&gt;();
+            Debug.Assert(image != null);
+            _componentCache[component] = image;
+        }
+    
+        /// &lt;inheritdoc /&gt;
+        public void ClearComponent(Transform component)
+        {
+            // This is used at design-time in the editor, so we don't have our cache
+            // populated here.
+            RawImage image = component.GetComponent&lt;RawImage&gt;();
+            if (image == null) return;
+            image.uvRect = new Rect(0, 0, 1, 1); 
+        }
+    
+        /// &lt;inheritdoc /&gt;
+        public void ForceComponentRule(Transform component, IStyleModuleRule rule)
+        {
+            // This is used at design-time in the editor, so we don't have our cache
+            // populated here.
+            if (rule is not RawImageUvPositionModuleRule uvRule) return;
+            RawImage image = component.GetComponent&lt;RawImage&gt;();
+            if (image == null) return;
+            SetUvRectPosition(uvRule.UvPosition, image);
+        }
+
+        /// &lt;inheritdoc /&gt;
+        public void Transition(Transform component, IStyleModuleRule rule)
+        {
+            // Since no duration is defined, this is an immediate transition, with
+            // no animation.
+            if (rule is not RawImageUvPositionModuleRule uvRule) return;
+            RawImage image = _componentCache[component];
+            if (image == null) return;
+            SetUvRectPosition(uvRule.UvPosition, image);
+        }
+
+        /// &lt;inheritdoc /&gt;
+        public void Transition(Transform component, IStyleModuleRule rule,
+            float duration, Ease easing)
+        {
+            if (rule is not RawImageUvPositionModuleRule uvRule) return;
+            RawImage image = _componentCache[component];
+    
+            // This is where the actual tween happens!
+            _motionHandle = LMotion.Create(image.uvRect.position, uvRule.UvPosition,
+                duration)
+            .WithEase(easing)
+            .Bind(image, SetUvRectPosition);
+        }
+
+        private static void SetUvRectPosition(Vector2 position, RawImage target)
+        {
+            // LitMotion comes with a lot of built-in binding extensions, but we
+            // didn't have one for this case. That's fine, since we were able to
+            // re-use this logic in a few different places.
+            Rect rect = target.uvRect;
+            rect.position = position;
+            target.uvRect = rect;
+        }
+
+        /// &lt;inheritdoc /&gt;
+        public void Reset()
+        {
+            // This gets run when we return modules to the pool.
+            StopTween();
+            _componentCache.Clear();
+        }
+
+        private void StopTween()
+        {
+            if (_motionHandle != MotionHandle.None && _motionHandle.IsPlaying())
+            {
+                _motionHandle.Cancel();
+            }
+            _motionHandle = MotionHandle.None;
+        }
+
+        // We're hiding this away, because folks should use Create.
+        private RawImageUvPositionModule()
+        {}
+    } 
+}
+```
+
+Now here's our rule file,`RawImageUvPositionModuleRule.cs`:
+
+```cs
+using System;
+using UnityEngine;
+using HiddenAchievement.CrossguardUi;
+using HiddenAchievement.CrossguardUi.Modules;
+
+namespace MyApplicationDomain
+{
+    [Serializable]
+    // Describes where to put this in our Module menu.
+    [StyleModuleRule("RawImage/UV Position")]
+    public class RawImageUvPositionModuleRule : IStyleModuleRule
+    {
+        // Our data value.
+        public Vector2 UvPosition;
+        
+        // These help us fetch the right Module to go with our data.
+        public Type ModuleType => typeof(RawImageUvPositionModule);
+        public IStyleModule GetModuleInstance() => RawImageUvPositionModule.Create();
+    }
+}
+```
+
+Finally, in an Editor folder, we can make `RawImageUvPositionModuleDrawer.cs`. We need this for displaying our rule
+neatly in the editor, where it is used.
+
+```cs
+using UnityEditor;
+using UnityEngine;
+
+namespace MyApplicationDomain
+{
+    [CustomPropertyDrawer(typeof(RawImageUvPositionModuleRule))]
+    public class RawImageUvPositionModuleRuleDrawer : PropertyDrawer
+    {
+        public override void OnGUI(Rect position, SerializedProperty property,
+            GUIContent label)
+        {
+            EditorGUI.BeginProperty(position, label, property);
+            // This is what will appear in the inspector.
+            label.text = "Uv Position";
+            // The name given here must match the name, spelling, and capitalization
+            // in our Rule file.
+            EditorGUI.PropertyField(position,
+                property.FindPropertyRelative("UvPosition"), label);
+            EditorGUI.EndProperty();
+        }
+    }
+}
+```
+
+If you Add Rule on any Omni Transitioner State or Modular Style, you'll now find that there's a `RawImage` section
+which includes our new Module type.
+
+![](images/raw_image_module.png)
+
+And now we can add this rule to a state, and fill it in with our values.
+
+![](images/raw_image_module2.png)
+
+Here we've set up two states on an Omni Transitioner, and hooked a toggle up to `SetValue`, so we can see it in action:
+
+![](images/uv_scrolling.gif)
+
 # Known Issues
 
 This section contains a list of any reamining issues that haven't been
@@ -788,14 +1095,6 @@ we haven't done yet.
 We don't yet have any scripts for automatically replacing UGUI elements
 with equivalent Crossguard elements.  However, this would be very nice
 to have.
-
-## Animation Transitioner Optimization
-
-Like Unity's Animation Transition, Crossguard's has some less-than-ideal
-performance, because the Animator does updates all the time, even when it's
-sitting around in `Normal` state.  It would be nice to investigate whether
-there's a viable way to snooze the Animator while the element is parked in a
-state with a length 0 animation.
 
 
 <!-- Markdeep: --><script src="markdeep.min.js" charset="utf-8"></script>

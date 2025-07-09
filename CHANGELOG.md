@@ -2,6 +2,17 @@
 
 All notable end-user facing changes should be documented in this file.
 
+## [1.1.4] 2025-07-09
+
+### Changed
+
+- Brought documentation up-to-date with current features.
+
+### Removed
+
+- Removed the Animation Transitioner. It wasn't a great sample, we don't use it, and we don't want to support it.
+
+
 ## [1.1.3] 2025-07-08
 
 ### Added
