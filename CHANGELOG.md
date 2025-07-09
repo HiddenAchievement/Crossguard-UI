@@ -2,6 +2,15 @@
 
 All notable end-user facing changes should be documented in this file.
 
+## [1.1.3] 2025-07-08
+
+### Added
+
+- Added two Layout related MonoBehaviours:
+  - `MultiAxisContentSizeFitter` - Grows up to a maximum, and then grows on the other axis. Useful for alert boxes.
+  - `ShrinkwrapLayoutElement` - A layout container that shrinks or stretches to fit its content. Useful for buttons.
+
+
 ## [1.1.2] 2025-07-07
 
 ### Changed
