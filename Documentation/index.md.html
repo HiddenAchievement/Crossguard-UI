@@ -14,11 +14,30 @@ you'll need to do to get the most out of it.
 
 ## Get the Package
 
-You will need the Crossguard UI package available in your Unity project.  Right
-now, the best way to do this is to place the project inside  of the `Packages`
-folder inside your project root (one left up from your `Assets` folder).
-Whether provided by subrepository or copy,  it should reside in a folder
-called `com.hiddenachievement.crossguardui`.
+This package depends on [LitMotion](https://github.com/annulusgames/LitMotion)
+for tweening. You should add that to your project first, before proceeding.
+
+The easiest way to use this package is by using the git bundle. Open the Unity
+Package Manager (`Window > Package Manager`), and hit the + symbol in the upper
+left of the window. Select `Add package from git URL...`. If you just want
+to use whatever the latest package is, you can use this URL:
+
+```
+https://github.com/HiddenAchievement/Crossguard-UI.git
+```
+
+However, it's less risky to select a specific tag, so that you don't risk
+encountering a breaking change. Every revision in the CHANGELOG has a tag. To
+specify a tag, simply put a #, followed by the tag name, at the end of the URL.
+For instance, this will use the 1.1.4 version:
+
+```
+https://github.com/HiddenAchievement/Crossguard-UI.git#v1.1.4
+```
+
+If you are doing development, you should probably pull the whole repository
+into a folder next to your testing project, and reference it by file path,
+instead.
 
 ## Prepare Your Project
 

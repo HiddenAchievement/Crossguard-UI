@@ -23,6 +23,10 @@ Use `Add package from git URL...` in Unity's Package Manager, and enter:
 
 `https://github.com/HiddenAchievement/Crossguard-UI.git`
 
+Or, if you'd like to play it safe, you may wish to specify a tag, instead. e.g.
+
+`https://github.com/HiddenAchievement/Crossguard-UI.git#v1.1.4`
+
 ### Add Package from Disk
 
 Pull this repository anywhere on your hard drive, and use `Add package from
