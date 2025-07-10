@@ -12,7 +12,7 @@ namespace HiddenAchievement.CrossguardUi
         public const int NoSelection = -1;
         
         [Serializable]
-        public class RadioGroupEvent : UnityEvent<CrossToggleBase> {}
+        public class RadioGroupEvent : UnityEvent<ICrossToggle> {}
         
         [SerializeField]
         private bool _allowSwitchOff = false;
@@ -36,7 +36,7 @@ namespace HiddenAchievement.CrossguardUi
         /// </summary>
         public int Id => SelectedToggle == null ? NoSelection : SelectedToggle.Id;
 
-        public CrossToggleBase SelectedToggle { get; private set; } = null;
+        public ICrossToggle SelectedToggle { get; private set; } = null;
         
         public bool HasSelectedToggle => SelectedToggle != null;
 
@@ -49,12 +49,12 @@ namespace HiddenAchievement.CrossguardUi
         /// </summary>
         /// <param name="toggle">The toggle that got triggered on.</param>
         /// <param name="sendCallback">If other toggles should send onValueChanged.</param>
-        public override void NotifyToggleOn(CrossToggleBase toggle, bool sendCallback = true)
+        public override void NotifyToggleOn(ICrossToggle toggle, bool sendCallback = true)
         {
 #if UNITY_EDITOR
             ValidateToggleIsInGroup(toggle);
 #endif
-            CrossToggleBase oldToggle = SelectedToggle;
+            ICrossToggle oldToggle = SelectedToggle;
             if (oldToggle == toggle) return;
 
             if (oldToggle != null)
@@ -78,7 +78,8 @@ namespace HiddenAchievement.CrossguardUi
         /// Notify the group that the given toggle is disabled.
         /// </summary>
         /// <param name="toggle">The toggle that got triggered on.</param>
-        public override void NotifyToggleOff(CrossToggleBase toggle, bool sendCallback = true)
+        /// <param name="sendCallback">If this toggle should send onValueChanged.</param>
+        public override void NotifyToggleOff(ICrossToggle toggle, bool sendCallback = true)
         {
             if (_suppressNotifyOff) return;
 #if UNITY_EDITOR

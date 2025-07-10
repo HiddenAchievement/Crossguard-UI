@@ -466,9 +466,9 @@ namespace HiddenAchievement.CrossguardUi
         public static GameObject CreateTextToggle(Resources resources)
         {
             GameObject toggleRoot = CreateUIElementRoot("Toggle", s_ThickSquareElementSize);
-            GameObject selector    = CreateUIObject("Selector",   toggleRoot);
-            GameObject background  = CreateUIObject("Background", toggleRoot);
-            GameObject label       = CreateUIObject("Label",       toggleRoot);
+            GameObject selector   = CreateUIObject("Selector",   toggleRoot);
+            GameObject background = CreateUIObject("Background", toggleRoot);
+            GameObject label      = CreateUIObject("Label",      toggleRoot);
 
             CrossTextToggle textToggle = toggleRoot.AddComponent<CrossTextToggle>();
             textToggle.transition = Selectable.Transition.None;
@@ -491,6 +491,7 @@ namespace HiddenAchievement.CrossguardUi
             labelText.alignment = TextAlignmentOptions.Center;
             labelText.raycastTarget = false;
             SetDefaultTextValues(labelText);
+            textToggle.Label = labelText;
 
             RectTransform labelRT = label.GetComponent<RectTransform>();
             labelRT.anchorMin = Vector2.zero;
@@ -500,6 +501,57 @@ namespace HiddenAchievement.CrossguardUi
             ColorAndScaleTransitioner transitioner = toggleRoot.AddComponent<ColorAndScaleTransitioner>();
             transitioner.Style = resources.ButtonStyle;
             
+            return toggleRoot;
+        }
+        
+        /// <summary>
+        /// Create the Legacy UGUI Toggle.
+        /// </summary>
+        /// <remarks>
+        /// Hierarchy:
+        /// (root)
+        ///     Toggle
+        ///         - Selector
+        ///         - Background
+        ///             - Checkmark
+        /// </remarks>
+        /// <param name="resources">The resources to use for creation.</param>
+        /// <returns>The root GameObject of the created element.</returns>
+        public static GameObject CreateUguiToggle(Resources resources)
+        {
+            GameObject toggleRoot = CreateUIElementRoot("Toggle", s_ThinSquareElementSize);
+            GameObject selector   = CreateUIObject("Selector", toggleRoot);
+            GameObject background = CreateUIObject("Background", toggleRoot);
+            GameObject checkmark  = CreateUIObject("Checkmark", background);
+
+            CrossUguiToggle crossToggle = toggleRoot.AddComponent<CrossUguiToggle>();
+            crossToggle.transition = Selectable.Transition.None;
+            crossToggle.IsOn = true;
+
+            ConfigureSelector(resources, selector);
+            
+            Image bgImage  = background.AddComponent<Image>();
+            bgImage.sprite = resources.Standard;
+            bgImage.type   = Image.Type.Sliced;
+            bgImage.color  = s_DefaultSelectableColor;
+
+            Image checkmarkImage  = checkmark.AddComponent<Image>();
+            checkmarkImage.sprite = resources.Checkmark;
+            crossToggle.graphic   = checkmarkImage;
+            crossToggle.toggleTransition = Toggle.ToggleTransition.None;
+
+            RectTransform bgRect = background.GetComponent<RectTransform>();
+            bgRect.sizeDelta     = s_ThinSquareElementSize;
+
+            RectTransform checkmarkRect = checkmark.GetComponent<RectTransform>();
+            checkmarkRect.anchorMin = new Vector2(0.5f, 0.5f);
+            checkmarkRect.anchorMax = new Vector2(0.5f, 0.5f);
+            checkmarkRect.anchoredPosition = Vector2.zero;
+            checkmarkRect.sizeDelta = new Vector2(20f, 20f);
+
+            ColorAndScaleTransitioner transitioner = toggleRoot.AddComponent<ColorAndScaleTransitioner>();
+            transitioner.Style = resources.ToggleStyle;
+
             return toggleRoot;
         }
 

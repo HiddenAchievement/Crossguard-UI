@@ -10,7 +10,7 @@ namespace HiddenAchievement.CrossguardUi
     /// A base implementation for basic Toggle behavior that can be used for additional custom Crossguard toggles.
     /// </summary>
     [RequireComponent(typeof(RectTransform))]
-    public class CrossToggleBase : CrossSelectable, IPointerClickHandler, ISubmitHandler, ICanvasElement
+    public class CrossToggleBase : CrossSelectable, IPointerClickHandler, ISubmitHandler, ICanvasElement, ICrossToggle
     {
         public const int NoId = int.MinValue;
         
@@ -204,6 +204,9 @@ namespace HiddenAchievement.CrossguardUi
 
         private void UpdateAppearance(bool immediate)
         {
+#if UNITY_EDITOR
+            if (!Application.isPlaying && _transitioner == null) return;
+#endif
             PlayEffect(immediate);
             if (_isOn)
             {

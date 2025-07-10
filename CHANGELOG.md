@@ -2,6 +2,18 @@
 
 All notable end-user facing changes should be documented in this file.
 
+## [1.1.5] 2025-07-09
+
+### Changed
+
+- Updated package acquisition guidance in documentation.
+- Crossguard Toggle Groups now inreract with ICrossToggle, instead of CrossToggleBase, so that they are compatible with
+  CrossUguiToggle.
+
+### Added
+
+- New `CrossUguiToggle` MonoBehaviour brings Crossguard features to legacy UGUI toggles.
+
 ## [1.1.4] 2025-07-09
 
 ### Changed

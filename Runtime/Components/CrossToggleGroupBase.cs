@@ -11,7 +11,7 @@ namespace HiddenAchievement.CrossguardUi
     /// </summary>
     public class CrossToggleGroupBase : UIBehaviour
     {
-        protected List<CrossToggleBase> _toggles = new List<CrossToggleBase>();
+        protected readonly List<ICrossToggle> _toggles = new();
 
         protected CrossToggleGroupBase()
         {
@@ -20,7 +20,8 @@ namespace HiddenAchievement.CrossguardUi
         public virtual bool AllowSwitchOff
         {
             get => true;
-            set { }
+            // ReSharper disable once ValueParameterNotUsed
+            set {}
         }
         
         protected override void Start()
@@ -29,7 +30,7 @@ namespace HiddenAchievement.CrossguardUi
             base.Start();
         }
         
-        protected virtual void ValidateToggleIsInGroup(CrossToggleBase toggle)
+        protected virtual void ValidateToggleIsInGroup(ICrossToggle toggle)
         {
             if (toggle == null || !_toggles.Contains(toggle))
                 throw new ArgumentException(string.Format("Toggle {0} is not part of ToggleGroup {1}", new object[] {toggle, this}));
@@ -40,7 +41,7 @@ namespace HiddenAchievement.CrossguardUi
         /// </summary>
         /// <param name="toggle">The toggle that got triggered on.</param>
         /// <param name="sendCallback">If other toggles should send onValueChanged.</param>
-        public virtual void NotifyToggleOn(CrossToggleBase toggle, bool sendCallback = true)
+        public virtual void NotifyToggleOn(ICrossToggle toggle, bool sendCallback = true)
         {
         }
         
@@ -49,7 +50,7 @@ namespace HiddenAchievement.CrossguardUi
         /// </summary>
         /// <param name="toggle">The toggle that got triggered off.</param>
         /// <param name="sendCallback">If other toggles should send onValueChanged.</param>
-        public virtual void NotifyToggleOff(CrossToggleBase toggle, bool sendCallback = true)
+        public virtual void NotifyToggleOff(ICrossToggle toggle, bool sendCallback = true)
         {
         }
         
@@ -57,7 +58,7 @@ namespace HiddenAchievement.CrossguardUi
         /// Unregister a toggle from the group.
         /// </summary>
         /// <param name="toggle">The toggle to remove.</param>
-        public virtual void UnregisterToggle(CrossToggleBase toggle)
+        public virtual void UnregisterToggle(ICrossToggle toggle)
         {
             if (_toggles.Contains(toggle))
                 _toggles.Remove(toggle);
@@ -67,7 +68,7 @@ namespace HiddenAchievement.CrossguardUi
         /// Register a toggle with the toggle group so it is watched for changes and notified if another toggle in the group changes.
         /// </summary>
         /// <param name="toggle">The toggle to register with the group.</param>
-        public virtual void RegisterToggle(CrossToggleBase toggle)
+        public virtual void RegisterToggle(ICrossToggle toggle)
         {
             if (!_toggles.Contains(toggle))
                 _toggles.Add(toggle);
@@ -97,7 +98,7 @@ namespace HiddenAchievement.CrossguardUi
         /// <remarks>
         /// Toggles belonging to this group but are not active either because their GameObject is inactive or because the Toggle component is disabled, are not returned as part of the list.
         /// </remarks>
-        public virtual IEnumerable<CrossToggleBase> ActiveToggles()
+        public virtual IEnumerable<ICrossToggle> ActiveToggles()
         {
             return _toggles.Where(x => x.IsOn);
         }

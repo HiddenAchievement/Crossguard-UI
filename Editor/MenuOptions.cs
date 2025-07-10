@@ -60,6 +60,13 @@ namespace HiddenAchievement.CrossguardUi
             GameObject go = CrossDefaultControls.CreateTextToggle(GetStandardResources());
             PlaceUIElementRoot(go, menuCommand);
         }
+
+        [MenuItem("GameObject/UI/Crossguard UI/Toggle - UGUI", false, 1104)]
+        public static void AddUguiToggle(MenuCommand menuCommand)
+        {
+            GameObject go = CrossDefaultControls.CreateUguiToggle(GetStandardResources());
+            PlaceUIElementRoot(go, menuCommand);
+        }
         
         [MenuItem("GameObject/UI/Crossguard UI/Spinner - Icon", false, 1200)]
         public static void AddIconSpinner(MenuCommand menuCommand)
