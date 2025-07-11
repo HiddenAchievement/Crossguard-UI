@@ -2,7 +2,28 @@
 
 All notable end-user facing changes should be documented in this file.
 
+## [1.1.6] 2025-07-10
+
+### Added
+
+- Added `OnDropdownOpened` and `OnDropdownClosed` events to `CrossDropdown`.
+
+### Fixed
+
+- Fixed a `NullReferenceException` in `CrossSlider` that occurred during `OnValidate` in the Editor.
+- Corrected the ordering of the subheaders in this changelog.
+
+### Changed
+
+- Cleaned up old code in CrossDropdown.
+
+
+
 ## [1.1.5] 2025-07-09
+
+### Added
+
+- New `CrossUguiToggle` MonoBehaviour brings Crossguard features to legacy UGUI toggles.
 
 ### Changed
 
@@ -10,9 +31,6 @@ All notable end-user facing changes should be documented in this file.
 - Crossguard Toggle Groups now inreract with ICrossToggle, instead of CrossToggleBase, so that they are compatible with
   CrossUguiToggle.
 
-### Added
-
-- New `CrossUguiToggle` MonoBehaviour brings Crossguard features to legacy UGUI toggles.
 
 ## [1.1.4] 2025-07-09
 
@@ -36,14 +54,7 @@ All notable end-user facing changes should be documented in this file.
 
 ## [1.1.2] 2025-07-07
 
-### Changed
-
-- Module components are now tracked by Transform, rather than RectTransform. This allows us to potentially use the
-  OmniTransitioner for things that are not UI elements.
-- Renamed some modules to better fit their specific role.
-- Reorganized some modules.
-
-### Added
+~~### Added
 
 - Local Rotation Module
 - Image Fill Module
@@ -52,11 +63,14 @@ All notable end-user facing changes should be documented in this file.
 - Anchor Max Module
 - Alpha Canvas Group Module
 
-## [1.1.1] 2025-07-07
-
 ### Changed
 
-- Pulled modular transition logic into a `ModularTransitionManager` that can be used by more than one thing.
+- Module components are now tracked by Transform, rather than RectTransform. This allows us to potentially use the
+  OmniTransitioner for things that are not UI elements.
+- Renamed some modules to better fit their specific role.
+- Reorganized some modules.
+
+## [1.1.1] 2025-07-07
 
 ### Added
 
@@ -64,17 +78,11 @@ All notable end-user facing changes should be documented in this file.
 - Added `OmniTransitionerState`. You can add as many of these as you want to an `OmniTransitioner` to define the states
   that it will use.
 
-
-## [1.1.0] 2025-06-24
-
 ### Changed
 
-- Replaced the old pools with some new ones.
-- Added more comments ton `AbstractTransitioner`.
-- Migrated `FindComponent` from `ColorAndScaleTransitioner` to `AbstractTransitioner` so it can be used by other
-  Transitioners.
-- `AbstractTransitioner.ClearStateFlag` now automatically skips the `Normal` state, so Transitioners don't need to do
-  this.
+- Pulled modular transition logic into a `ModularTransitionManager` that can be used by more than one thing.
+
+## [1.1.0] 2025-06-24
 
 ### Added
 
@@ -92,6 +100,15 @@ All notable end-user facing changes should be documented in this file.
 
 - `ColorAndScaleTransitioner` now sets up the Checked style correctly.
 
+### Changed
+
+- Replaced the old pools with some new ones.
+- Added more comments ton `AbstractTransitioner`.
+- Migrated `FindComponent` from `ColorAndScaleTransitioner` to `AbstractTransitioner` so it can be used by other
+  Transitioners.
+- `AbstractTransitioner.ClearStateFlag` now automatically skips the `Normal` state, so Transitioners don't need to do
+  this.
+
 ## [1.0.8] 2025-06-12
 
 ### Changed
@@ -100,10 +117,6 @@ All notable end-user facing changes should be documented in this file.
   now.
 
 ## [1.0.7] 2025-06-07
-
-### Changed
-
-- Updated documentation (and small corrections).
 
 ### Added
 
@@ -114,6 +127,9 @@ All notable end-user facing changes should be documented in this file.
 - Fixed a bug that caused the `SimpleSpriteSwapTransitioner` to behave badly if a sprite wasn't set on one of the
   states.
 
+### Changed
+
+- Updated documentation (and small corrections).
 
 ## [1.0.6] - 2023-11-06
 
@@ -130,13 +146,6 @@ All notable end-user facing changes should be documented in this file.
 
 ## [1.0.4] - 2023-11-04
 
-### Changed
-
-- Package is now MIT licensed.
-- Tweaked documentation formatting.
-- Migrated documentation from Strapdown to Markdeep.
-- Simplified some redundant code in `ControllerPromptManager.cs`.
-
 ### Added
 
 - Added an `IsEditing` flag property to `CrossInputField` to indicate when it's actively editing text.
@@ -149,6 +158,13 @@ All notable end-user facing changes should be documented in this file.
 - Fixed missing transitions after Awake not called in Play mode in the Editor.
 - Fixed asmdef name.
 - Fixed internal links in documentation.
+
+### Changed
+
+- Package is now MIT licensed.
+- Tweaked documentation formatting.
+- Migrated documentation from Strapdown to Markdeep.
+- Simplified some redundant code in `ControllerPromptManager.cs`.
 
 ## [1.0.3] - 2021-03-12
 
@@ -167,6 +183,11 @@ All notable end-user facing changes should be documented in this file.
 
 ## [1.0.2] - 2021-02-26
 
+### Added
+
+- There is now a CrossTextToggle, which switches text when the button is
+  toggled.
+
 ### Changed
 
 - Improved behavior and fixed some bugs in Toggle Groups.
@@ -174,12 +195,6 @@ All notable end-user facing changes should be documented in this file.
 - AbstractTransitioner now exposes the `AxisNavMode`, in case it is needed
   elsewhere.
 - Fixed non-Editor compile error in ColorAndScaleTransitioner.
-
-### Added
-
-- There is now a CrossTextToggle, which switches text when the button is
-  toggled.
-
 
 ## [1.0.1] - 2021-02-22
 
@@ -189,7 +204,6 @@ All notable end-user facing changes should be documented in this file.
 - Adjusted repeat defaults in AxisControlHelper.
 - Fixed a bug where Transitioners with Select on Enable on would sometimes
   select before there was an EventSystem available.
-
 
 ## [1.0.0] - 2021-02-16
 
