@@ -4,8 +4,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
-using TMPro;
 using UnityEngine.Events;
+using TMPro;
+using LitMotion;
+using LitMotion.Extensions;
 
 namespace HiddenAchievement.CrossguardUi
 {
@@ -18,29 +20,28 @@ namespace HiddenAchievement.CrossguardUi
         protected class CrossDropdownItem : MonoBehaviour, ICancelHandler, ISelectHandler
         {
             [SerializeField]
-            private TMP_Text _text = null;
+            private TMP_Text _text;
             [SerializeField]
-            private Image _image = null;
+            private Image _image;
             [SerializeField]
-            private RectTransform _rectTransform = null;
+            private RectTransform _rectTransform;
             [SerializeField]
-            private CrossToggle crossToggle = null;
+            private CrossToggle _crossToggle;
 
             public TMP_Text Text { get => _text; set => _text = value; }
             public Image Image { get => _image; set => _image = value;
             }
-            public RectTransform RectTransform { get => _rectTransform; set => _rectTransform = value;
-            }
-            public CrossToggle Toggle { get => crossToggle; set => crossToggle = value;
-            }
+            public RectTransform RectTransform { get => _rectTransform; set => _rectTransform = value; }
+            public CrossToggle Toggle { get => _crossToggle; set => _crossToggle = value; }
             
             public CrossDropdown Dropdown { get; set; }
             
-            public virtual void OnCancel(BaseEventData eventData)
+            public void OnCancel(BaseEventData eventData)
             {
-                CrossDropdown dropdown = this.GetComponentInParent<CrossDropdown>();
-                if (dropdown)
-                    dropdown.Hide();
+                if (Dropdown != null)
+                {
+                    Dropdown.Hide();
+                }
             }
 
             public void OnSelect(BaseEventData eventData)
@@ -109,7 +110,7 @@ namespace HiddenAchievement.CrossguardUi
 
         [SerializeField]
         private int _value;
-        public int value { get => _value; set => SetValue(value); }
+        public int Value { get => _value; set => SetValue(value); }
 
         [Space]
 
@@ -128,9 +129,19 @@ namespace HiddenAchievement.CrossguardUi
 
         // Notification triggered when the dropdown changes.
         [SerializeField]
-        private DropdownEvent _onValueChanged = new DropdownEvent();
+        private DropdownEvent _onValueChanged = new();
         
         public DropdownEvent OnValueChanged { get => _onValueChanged; set => _onValueChanged = value; }
+
+        [SerializeField]
+        private UnityEvent _onDropdownOpened = new();
+        
+        public UnityEvent OnDropdownOpened { get => _onDropdownOpened; set => _onDropdownOpened = value; }
+        
+        [SerializeField]
+        private UnityEvent _onDropdownClosed = new();
+        
+        public UnityEvent OnDropdownClosed { get => _onDropdownClosed; set => _onDropdownClosed = value; }
 
         [SerializeField]
         private float _alphaFadeSpeed = 0.15f;
@@ -143,12 +154,12 @@ namespace HiddenAchievement.CrossguardUi
 
         private GameObject _dropdown;
         private GameObject _blocker;
-        private List<CrossDropdownItem> _items = new List<CrossDropdownItem>();
-        // private TweenRunner<FloatTween> m_AlphaTweenRunner;
-        private bool _validTemplate = false;
-        private Coroutine _destroyCoroutine = null;
+        private readonly List<CrossDropdownItem> _items = new();
 
-        private static TMP_Dropdown.OptionData s_noOptionData = new TMP_Dropdown.OptionData();
+        private bool _validTemplate;
+        private Coroutine _destroyCoroutine;
+
+        private static readonly TMP_Dropdown.OptionData s_noOptionData = new();
 
         public bool IsExpanded => _dropdown != null;
 
@@ -290,14 +301,6 @@ namespace HiddenAchievement.CrossguardUi
         
         // ============================================================================================
 
-        
-        
-        
-        
-        
-        
-        
-        
         /// <summary>
         /// Set index number of the current selection in the Dropdown without invoking onValueChanged callback.
         /// </summary>
@@ -338,18 +341,12 @@ namespace HiddenAchievement.CrossguardUi
 
             if (_captionText)
             {
-                if (data != null && data.text != null)
-                    _captionText.text = data.text;
-                else
-                    _captionText.text = "";
+                _captionText.text = data is { text: not null } ? data.text : "";
             }
 
             if (_captionImage)
             {
-                if (data != null)
-                    _captionImage.sprite = data.image;
-                else
-                    _captionImage.sprite = null;
+                _captionImage.sprite  = data?.image;
                 _captionImage.enabled = (_captionImage.sprite != null);
             }
 
@@ -363,8 +360,8 @@ namespace HiddenAchievement.CrossguardUi
         /// Add multiple options to the options of the Dropdown based on a list of OptionData objects.
         /// </summary>
         /// <param name="options">The list of OptionData to add.</param>
-        /// /// <remarks>
-        /// See AddOptions(List<string> options) for code example of usages.
+        /// <remarks>
+        /// See AddOptions(List&lt;string&gt; options) for code example of usages.
         /// </remarks>
         public void AddOptions(List<TMP_Dropdown.OptionData> options)
         {
@@ -385,7 +382,7 @@ namespace HiddenAchievement.CrossguardUi
         /// </summary>
         /// <param name="options">The list of Sprites to add.</param>
         /// <remarks>
-        /// See AddOptions(List<string> options) for code example of usages.
+        /// See AddOptions(List&lt;string&gt; options) for code example of usages.
         /// </remarks>
         public void AddOptions(List<Sprite> options)
         {
@@ -560,6 +557,7 @@ namespace HiddenAchievement.CrossguardUi
 
             // Make drop-down RectTransform have same values as original.
             RectTransform dropdownRectTransform = _dropdown.transform as RectTransform;
+            Debug.Assert(dropdownRectTransform);
             dropdownRectTransform.SetParent(_template.transform.parent, false);
 
             // Get Canvas Group for animating.
@@ -572,6 +570,7 @@ namespace HiddenAchievement.CrossguardUi
 
             GameObject content = itemTemplate.RectTransform.parent.gameObject;
             RectTransform contentRectTransform = content.transform as RectTransform;
+            Debug.Assert(contentRectTransform);
             itemTemplate.RectTransform.gameObject.SetActive(true);
 
             // Get the rects of the dropdown and item
@@ -589,12 +588,12 @@ namespace HiddenAchievement.CrossguardUi
             for (int i = 0; i < Options.Count; ++i)
             {
                 TMP_Dropdown.OptionData data = Options[i];
-                CrossDropdownItem item = AddItem(data, value == i, itemTemplate, _items);
+                CrossDropdownItem item = AddItem(data, Value == i, itemTemplate, _items);
                 if (item == null)
                     continue;
 
                 // Automatically set up a toggle state change listener
-                item.Toggle.IsOn = value == i;
+                item.Toggle.IsOn = Value == i;
                 item.Toggle.OnValueChanged.AddListener(x => OnSelectItem(item.Toggle));
 
                 // Select current option
@@ -636,6 +635,7 @@ namespace HiddenAchievement.CrossguardUi
             dropdownRectTransform.GetWorldCorners(corners);
 
             RectTransform rootCanvasRectTransform = rootCanvas.transform as RectTransform;
+            Debug.Assert(rootCanvasRectTransform);
             Rect rootCanvasRect = rootCanvasRectTransform.rect;
             for (int axis = 0; axis < 2; axis++)
             {
@@ -664,16 +664,18 @@ namespace HiddenAchievement.CrossguardUi
             }
 
             // Fade in the popup
-            AlphaFadeList(_alphaFadeSpeed, 0f, 1f);
+            AlphaFadeList(1f);
 
             // Make drop-down template and item template inactive
             _template.gameObject.SetActive(false);
             itemTemplate.gameObject.SetActive(false);
 
             _blocker = CreateBlocker(rootCanvas);
+
+            OnDropdownOpened?.Invoke();
         }
-                
-                /// <summary>
+        
+        /// <summary>
         /// Create a blocker that blocks clicks to other controls while the dropdown list is open.
         /// </summary>
         /// <remarks>
@@ -731,7 +733,6 @@ namespace HiddenAchievement.CrossguardUi
                 GetOrAddComponent<GraphicRaycaster>(blocker);
             }
 
-
             // Add image since it's needed to block, but make it clear.
             Image blockerImage = blocker.AddComponent<Image>();
             blockerImage.color = Color.clear;
@@ -765,7 +766,7 @@ namespace HiddenAchievement.CrossguardUi
         /// <returns>The created drop down list gameobject.</returns>
         protected virtual GameObject CreateDropdownList(GameObject template)
         {
-            return (GameObject)Instantiate(template);
+            return Instantiate(template);
         }
 
         /// <summary>
@@ -791,10 +792,10 @@ namespace HiddenAchievement.CrossguardUi
         /// <returns>The created dropdown item component</returns>
         protected virtual CrossDropdownItem CreateItem(CrossDropdownItem itemTemplate)
         {
-            return (CrossDropdownItem)Instantiate(itemTemplate);
+            return Instantiate(itemTemplate);
         }
-                
-                /// <summary>
+        
+        /// <summary>
         ///  Convenience method to explicitly destroy the previously generated Items.
         /// </summary>
         /// <remarks>
@@ -809,6 +810,7 @@ namespace HiddenAchievement.CrossguardUi
         {
             // Add a new item to the dropdown.
             CrossDropdownItem item = CreateItem(itemTemplate);
+            item.Dropdown = this;
             item.RectTransform.SetParent(itemTemplate.RectTransform.parent, false);
 
             item.gameObject.SetActive(true);
@@ -832,46 +834,9 @@ namespace HiddenAchievement.CrossguardUi
             return item;
         }
 
-        private void AlphaFadeList(float duration, float alpha)
+        private void AlphaFadeList(float alpha)
         {
-            AlphaFadeList(duration, _listCanvasGroup.alpha, alpha);
-        }
-
-        private void AlphaFadeList(float duration, float start, float end)
-        {
-            if (end.Equals(start))
-                return;
-
-            // FloatTween tween = new FloatTween { duration = duration, startValue = start, targetValue = end };
-            // tween.AddOnChangedCallback(SetAlpha);
-            // tween.ignoreTimeScale = true;
-            // m_AlphaTweenRunner.StartTween(tween);
-
-            if (_fadeCoroutine != null)
-            {
-                StopCoroutine(_fadeCoroutine);
-            }
-            _fadeCoroutine = StartCoroutine(FadeList(duration, start, end));
-        }
-
-        private IEnumerator FadeList(float duration, float startValue, float targetValue)
-        {
-            float startTime = Time.unscaledTime;
-            float progress = 0;
-            do
-            {
-                progress = (Time.unscaledTime - startTime) / duration;
-                SetAlpha(Mathf.Lerp(startValue, targetValue, progress));
-                yield return null;
-            } while (progress < 1);
-        }
-
-        private void SetAlpha(float alpha)
-        {
-            if (!_dropdown)
-                return;
-            
-            _listCanvasGroup.alpha = alpha;
+            LMotion.Create(_listCanvasGroup.alpha, alpha, _alphaFadeSpeed).BindToAlpha(_listCanvasGroup);
         }
 
         /// <summary>
@@ -879,23 +844,22 @@ namespace HiddenAchievement.CrossguardUi
         /// </summary>
         public void Hide()
         {
-            if (_destroyCoroutine == null)
+            if (_destroyCoroutine != null) return;
+            if (_dropdown != null)
             {
-                if (_dropdown != null)
-                {
-                    AlphaFadeList(_alphaFadeSpeed, 0f);
+                AlphaFadeList(0f);
 
-                    // User could have disabled the dropdown during the OnValueChanged call.
-                    if (IsActive())
-                        _destroyCoroutine = StartCoroutine(DelayedDestroyDropdownList(_alphaFadeSpeed));
-                }
-
-                if (_blocker != null)
-                    DestroyBlocker(_blocker);
-
-                _blocker = null;
-                Select();
+                // User could have disabled the dropdown during the OnValueChanged call.
+                if (IsActive())
+                    _destroyCoroutine = StartCoroutine(DelayedDestroyDropdownList(_alphaFadeSpeed));
             }
+
+            if (_blocker != null)
+                DestroyBlocker(_blocker);
+
+            _blocker = null;
+            Select();
+            OnDropdownClosed?.Invoke();
         }
 
         private IEnumerator DelayedDestroyDropdownList(float delay)
@@ -946,11 +910,8 @@ namespace HiddenAchievement.CrossguardUi
             if (selectedIndex < 0)
                 return;
 
-            value = selectedIndex;
+            Value = selectedIndex;
             Hide();
         }
-
-        
-        
     }
 }
