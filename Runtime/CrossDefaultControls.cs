@@ -2,6 +2,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using UnityEditor.Events;
 
 namespace HiddenAchievement.CrossguardUi
 {
@@ -982,6 +983,203 @@ namespace HiddenAchievement.CrossguardUi
 
             // Set up RectTransforms.
 
+            RectTransform labelRT = label.GetComponent<RectTransform>();
+            labelRT.anchorMin = Vector2.zero;
+            labelRT.anchorMax = Vector2.one;
+            labelRT.offsetMin = new Vector2(10, 6);
+            labelRT.offsetMax = new Vector2(-25, -7);
+
+            RectTransform arrowRT = arrow.GetComponent<RectTransform>();
+            arrowRT.anchorMin = new Vector2(1, 0.5f);
+            arrowRT.anchorMax = new Vector2(1, 0.5f);
+            arrowRT.sizeDelta = new Vector2(20, 20);
+            arrowRT.anchoredPosition = new Vector2(-15, 0);
+
+            RectTransform templateRT = template.GetComponent<RectTransform>();
+            templateRT.anchorMin = new Vector2(0, 0);
+            templateRT.anchorMax = new Vector2(1, 0);
+            templateRT.pivot = new Vector2(0.5f, 1);
+            templateRT.anchoredPosition = new Vector2(0, 2);
+            templateRT.sizeDelta = new Vector2(0, 150);
+
+            RectTransform viewportRT = viewport.GetComponent<RectTransform>();
+            viewportRT.anchorMin = new Vector2(0, 0);
+            viewportRT.anchorMax = new Vector2(1, 1);
+            viewportRT.sizeDelta = new Vector2(-18, 0);
+            viewportRT.pivot = new Vector2(0, 1);
+
+            RectTransform contentRT = content.GetComponent<RectTransform>();
+            contentRT.anchorMin = new Vector2(0f, 1);
+            contentRT.anchorMax = new Vector2(1f, 1);
+            contentRT.pivot = new Vector2(0.5f, 1);
+            contentRT.anchoredPosition = new Vector2(0, 0);
+            contentRT.sizeDelta = new Vector2(0, 28);
+
+            RectTransform itemRT = item.GetComponent<RectTransform>();
+            itemRT.anchorMin = new Vector2(0, 0.5f);
+            itemRT.anchorMax = new Vector2(1, 0.5f);
+            itemRT.sizeDelta = new Vector2(0, 20);
+
+            RectTransform itemBackgroundRT = itemBackground.GetComponent<RectTransform>();
+            itemBackgroundRT.anchorMin = Vector2.zero;
+            itemBackgroundRT.anchorMax = Vector2.one;
+            itemBackgroundRT.sizeDelta = Vector2.zero;
+
+            RectTransform itemCheckmarkRT = itemCheckmark.GetComponent<RectTransform>();
+            itemCheckmarkRT.anchorMin = new Vector2(0, 0.5f);
+            itemCheckmarkRT.anchorMax = new Vector2(0, 0.5f);
+            itemCheckmarkRT.sizeDelta = new Vector2(20, 20);
+            itemCheckmarkRT.anchoredPosition = new Vector2(10, 0);
+
+            RectTransform itemLabelRT = itemLabel.GetComponent<RectTransform>();
+            itemLabelRT.anchorMin = Vector2.zero;
+            itemLabelRT.anchorMax = Vector2.one;
+            itemLabelRT.offsetMin = new Vector2(20, 1);
+            itemLabelRT.offsetMax = new Vector2(-10, -2);
+
+            template.SetActive(false);
+
+            ColorAndScaleTransitioner transitioner = root.AddComponent<ColorAndScaleTransitioner>();
+            transitioner.Style = resources.DropdownStyle;
+            
+            return root;
+        }
+        
+        /// <summary>
+        /// Create the basic UGUI dropdown.
+        /// </summary>
+        /// <remarks>
+        /// Hierarchy:
+        /// (root)
+        ///     Dropdown
+        ///         - Button
+        ///             - Selector
+        ///             - Label
+        ///             - Arrow
+        ///         - Template
+        ///             - Viewport
+        ///                 - Content
+        ///                     - Item
+        ///                         - Item Background
+        ///                         - Item Checkmark
+        ///                         - Item Label
+        ///             - Scrollbar
+        ///                 - Sliding Area
+        ///                     - Handle
+        /// </remarks>
+        /// <param name="resources">The resources to use for creation.</param>
+        /// <returns>The root GameObject of the created element.</returns>
+        public static GameObject CreateUguiDropdown(Resources resources)
+        {
+            GameObject root = CreateUIElementRoot("Dropdown", s_ThickElementSize);
+            GameObject button         = CreateUIObject("Button",          root);
+            GameObject selector       = CreateUIObject("Selector",        button);
+            GameObject label          = CreateUIObject("Label",           button);
+            GameObject arrow          = CreateUIObject("Arrow",           button);
+            GameObject template       = CreateUIObject("Template",        root);
+            GameObject viewport       = CreateUIObject("Viewport",        template);
+            GameObject content        = CreateUIObject("Content",         viewport);
+            GameObject item           = CreateUIObject("Item",            content);
+            GameObject itemBackground = CreateUIObject("Item Background", item);
+            GameObject itemCheckmark  = CreateUIObject("Item Checkmark",  item);
+            GameObject itemLabel      = CreateUIObject("Item Label",      item);
+
+            ConfigureSelector(resources, selector);
+            
+            // Sub controls.
+
+            GameObject scrollbar = CreateScrollbar(resources, true);
+            scrollbar.name = "Scrollbar";
+            SetParentAndAlign(scrollbar, template);
+
+            CrossScrollbar scrollbarScrollbar = scrollbar.GetComponent<CrossScrollbar>();
+            scrollbarScrollbar.SetDirection(Scrollbar.Direction.BottomToTop, true);
+            Navigation nav = scrollbarScrollbar.navigation;
+            nav.mode = Navigation.Mode.None;
+            scrollbarScrollbar.navigation = nav;
+
+            RectTransform vScrollbarRT = scrollbar.GetComponent<RectTransform>();
+            vScrollbarRT.anchorMin = Vector2.right;
+            vScrollbarRT.anchorMax = Vector2.one;
+            vScrollbarRT.pivot = Vector2.one;
+            vScrollbarRT.sizeDelta = new Vector2(vScrollbarRT.sizeDelta.x, 0);
+
+            // Setup item UI components.
+
+            TextMeshProUGUI itemLabelText = itemLabel.AddComponent<TextMeshProUGUI>();
+            SetDefaultTextValues(itemLabelText);
+            itemLabelText.alignment = TextAlignmentOptions.Left;
+
+            Image itemBackgroundImage = itemBackground.AddComponent<Image>();
+            itemBackgroundImage.color = new Color32(245, 245, 245, 255);
+
+            Image itemCheckmarkImage = itemCheckmark.AddComponent<Image>();
+            itemCheckmarkImage.sprite = resources.Checkmark;
+
+            CrossUguiToggle itemCrossToggle = item.AddComponent<CrossUguiToggle>();
+            itemCrossToggle.graphic = itemCheckmarkImage;
+            itemCrossToggle.IsOn = true;
+            
+            ColorAndScaleTransitioner itemTransitioner = item.AddComponent<ColorAndScaleTransitioner>();
+            itemTransitioner.Style = resources.DropdownItemStyle;
+
+            // Setup template UI components.
+
+            Image templateImage = template.AddComponent<Image>();
+            templateImage.sprite = resources.Standard;
+            templateImage.type = Image.Type.Sliced;
+
+            ScrollRect templateScrollRect = template.AddComponent<ScrollRect>();
+            templateScrollRect.content = (RectTransform)content.transform;
+            templateScrollRect.viewport = (RectTransform)viewport.transform;
+            templateScrollRect.horizontal = false;
+            templateScrollRect.movementType = ScrollRect.MovementType.Clamped;
+            templateScrollRect.verticalScrollbar = scrollbarScrollbar;
+            templateScrollRect.verticalScrollbarVisibility = ScrollRect.ScrollbarVisibility.AutoHideAndExpandViewport;
+            templateScrollRect.verticalScrollbarSpacing = -3;
+            templateScrollRect.scrollSensitivity = 20;
+
+            Mask scrollRectMask = viewport.AddComponent<Mask>();
+            scrollRectMask.showMaskGraphic = false;
+
+            Image viewportImage = viewport.AddComponent<Image>();
+            viewportImage.sprite = resources.Mask;
+            viewportImage.type = Image.Type.Sliced;
+
+            // Setup dropdown UI components.
+
+            TextMeshProUGUI labelText = label.AddComponent<TextMeshProUGUI>();
+            SetDefaultTextValues(labelText);
+            labelText.alignment = TextAlignmentOptions.Left;
+
+            Image arrowImage = arrow.AddComponent<Image>();
+            arrowImage.sprite = resources.Dropdown;
+
+            Image backgroundImage = button.AddComponent<Image>();
+            backgroundImage.sprite = resources.Standard;
+            backgroundImage.color = s_DefaultSelectableColor;
+            backgroundImage.type = Image.Type.Sliced;
+
+            RectTransform buttonRT = button.GetComponent<RectTransform>();
+            buttonRT.anchorMin = new Vector2(0, 0);
+            buttonRT.anchorMax = new Vector2(1, 1);
+            buttonRT.sizeDelta = new Vector2(0, 0);
+
+            CrossUguiDropdown dropdown = root.AddComponent<CrossUguiDropdown>();
+            dropdown.targetGraphic = backgroundImage;
+            dropdown.template = template.GetComponent<RectTransform>();
+            dropdown.captionText = labelText;
+            dropdown.itemText = itemLabelText;
+            UnityEventTools.AddVoidPersistentListener(itemCrossToggle.OnNavSelected, dropdown.OnToggleSelected);
+
+            // Setting default Item list.
+            itemLabelText.text = "Option A";
+            dropdown.options.Add(new TMP_Dropdown.OptionData {text = "Option A" });
+            dropdown.options.Add(new TMP_Dropdown.OptionData {text = "Option B" });
+            dropdown.options.Add(new TMP_Dropdown.OptionData {text = "Option C" });
+            dropdown.RefreshShownValue();
+
+            // Set up RectTransforms.
             RectTransform labelRT = label.GetComponent<RectTransform>();
             labelRT.anchorMin = Vector2.zero;
             labelRT.anchorMax = Vector2.one;

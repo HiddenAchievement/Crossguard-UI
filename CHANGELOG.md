@@ -2,6 +2,26 @@
 
 All notable end-user facing changes should be documented in this file.
 
+## [1.1.7] 2025-07-11
+
+### Added
+
+- Added `CrossUguiDropdown` which is descended from `TMP_Dropdown`, and uses `CrossUguiToggle` instead of
+  `CrossToggle`. If using the Create menu, the setup will fix the selection visibility bug that occurs in stock
+  `TMP_Dropdown`.
+- Added a `NavSelectedEvent` event to `CrossUguiToggle`. This is for detecting when a toggle is selected by navigation
+  events from gamepad or keyboard. (It has nothing to do with whether it has been toggled or not.)
+
+### Fixed
+
+- Added some safety checks to the tweens in `ColorAndScaleTransitioner`, in case the items they're tweening get
+  deleted. (TODO: The modules should also have these safeties added.) This should fix some lost reference errors
+  that were bubbling out of the tweener.
+
+### Changed
+
+- Modernized some code in `CrossInputField`.
+
 ## [1.1.6] 2025-07-10
 
 ### Added
@@ -16,8 +36,6 @@ All notable end-user facing changes should be documented in this file.
 ### Changed
 
 - Cleaned up old code in CrossDropdown.
-
-
 
 ## [1.1.5] 2025-07-09
 

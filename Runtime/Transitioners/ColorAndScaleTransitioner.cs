@@ -295,7 +295,9 @@ namespace HiddenAchievement.CrossguardUi
             }
             else
             {
-                LMotion.Create(info.Renderer.GetColor(), color, _style.TransitionTime).BindToColor(info.Renderer);
+                LMotion.Create(info.Renderer.GetColor(), color, _style.TransitionTime)
+                    .BindToColor(info.Renderer)
+                    .AddTo(info.Renderer.gameObject);
             }
         }
 
@@ -317,7 +319,9 @@ namespace HiddenAchievement.CrossguardUi
             }
             else
             {
-                LMotion.Create(info.Renderer.GetColor(), color, _style.TransitionTime).BindToColorNoAlpha(info.Renderer);
+                LMotion.Create(info.Renderer.GetColor(), color, _style.TransitionTime)
+                    .BindToColorNoAlpha(info.Renderer)
+                    .AddTo(info.Renderer.gameObject);;
             }
         }
 
@@ -341,7 +345,9 @@ namespace HiddenAchievement.CrossguardUi
             }
             else
             {
-                LMotion.Create(info.Renderer.GetColor().a, alpha, _style.TransitionTime).BindToColorA(info.Renderer);
+                LMotion.Create(info.Renderer.GetColor().a, alpha, _style.TransitionTime)
+                    .BindToColorA(info.Renderer)
+                    .AddTo(info.Renderer.gameObject);;
             }
         }
 
@@ -354,7 +360,8 @@ namespace HiddenAchievement.CrossguardUi
             else
             {
                 LMotion.Create((Vector2)info.Component.localScale, scale, _style.TransitionTime)
-                    .BindToLocalScaleXY(info.Component);
+                    .BindToLocalScaleXY(info.Component)
+                    .AddTo(info.Component.gameObject);;
             }
         }
         

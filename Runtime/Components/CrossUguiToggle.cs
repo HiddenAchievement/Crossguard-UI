@@ -1,6 +1,7 @@
 using System;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 namespace HiddenAchievement.CrossguardUi
@@ -14,6 +15,9 @@ namespace HiddenAchievement.CrossguardUi
         
         [Serializable]
         public class ToggleIdEvent : UnityEvent<int, bool> {}
+        
+        [Serializable]
+        public class NavSelectedEvent : UnityEvent<int> {}
         
         [Tooltip("A Cross Toggle Group, in case you want to use it instead of the standard Toggle Group")]
         [SerializeField]
@@ -46,6 +50,13 @@ namespace HiddenAchievement.CrossguardUi
         }
         
         public ToggleIdEvent OnValueChangedForId = new();
+
+        /// <summary>
+        /// It's very important to understand that this is not when the toggle is turned on. This is when the toggle is
+        /// selected by gamepad/keyboard/tab. This is primarily for ensuring visibility in pick lists, like dropdowns.
+        /// </summary>
+        [Tooltip("This is when a toggle is selected BY A GAME CONTROLLER OR KEYBOARD, and not when it is toggled.")]
+        public NavSelectedEvent OnNavSelected = new();
         
         private ITransitioner _transitioner;
         
@@ -89,6 +100,12 @@ namespace HiddenAchievement.CrossguardUi
         {
             SetCrossToggleGroup(null, false);
             base.OnDisable();
+        }
+
+        public override void OnSelect(BaseEventData eventData)
+        {
+            base.OnSelect(eventData);
+            OnNavSelected?.Invoke(_id);
         }
         
         private void SetCrossToggleGroup(CrossToggleGroupBase newGroup, bool setMemberValue)

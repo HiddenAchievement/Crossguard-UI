@@ -1,5 +1,4 @@
 ﻿using UnityEditor;
-using UnityEditor.Experimental.SceneManagement;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -107,6 +106,13 @@ namespace HiddenAchievement.CrossguardUi
         public static void AddDropdown(MenuCommand menuCommand)
         {
             GameObject go = CrossDefaultControls.CreateDropdown(GetStandardResources());
+            PlaceUIElementRoot(go, menuCommand);              
+        }
+        
+        [MenuItem("GameObject/UI/Crossguard UI/UGUI Dropdown", false, 1301)]
+        public static void AddUguiDropdown(MenuCommand menuCommand)
+        {
+            GameObject go = CrossDefaultControls.CreateUguiDropdown(GetStandardResources());
             PlaceUIElementRoot(go, menuCommand);              
         }
         

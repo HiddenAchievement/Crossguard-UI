@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections;
-using TMPro;
+﻿using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 #if INPUT_SYSTEM_AVAILABLE && ENABLE_INPUT_SYSTEM
 using UnityEngine.InputSystem;
-using UnityEngine.InputSystem.UI;
-
 #endif
 
 namespace HiddenAchievement.CrossguardUi
@@ -17,7 +13,7 @@ namespace HiddenAchievement.CrossguardUi
     public class CrossInputField : TMP_InputField
     {
         private ITransitioner _transitioner;
-        private bool _isolationMode = false;
+        private bool _isolationMode;
         private BaseEventData _eventData;
 
         private bool _tabPressed;
@@ -45,10 +41,7 @@ namespace HiddenAchievement.CrossguardUi
         protected override void DoStateTransition(SelectionState state, bool instant)
         {
             base.DoStateTransition(state, instant);
-            if (_transitioner == null)
-            {
-                _transitioner = GetComponent<ITransitioner>();
-            }
+            _transitioner ??= GetComponent<ITransitioner>();
             if (_transitioner == null) return;
             if (_transitioner.IsInteractable != interactable)
             {
@@ -151,10 +144,7 @@ namespace HiddenAchievement.CrossguardUi
         
         private void TriggerEvent<T>(ExecuteEvents.EventFunction<T> functor) where T : IEventSystemHandler
         {
-            if (_eventData == null)
-            {
-                _eventData = new BaseEventData(EventSystem.current);
-            }
+            _eventData ??= new BaseEventData(EventSystem.current);
             
             _eventData.selectedObject = gameObject;
             ExecuteEvents.Execute(gameObject, _eventData, functor);

@@ -139,11 +139,6 @@ namespace HiddenAchievement.CrossguardUi
         public UnityEvent OnDropdownOpened { get => _onDropdownOpened; set => _onDropdownOpened = value; }
         
         [SerializeField]
-        private UnityEvent _onDropdownClosed = new();
-        
-        public UnityEvent OnDropdownClosed { get => _onDropdownClosed; set => _onDropdownClosed = value; }
-
-        [SerializeField]
         private float _alphaFadeSpeed = 0.15f;
 
         /// <summary>
@@ -836,7 +831,9 @@ namespace HiddenAchievement.CrossguardUi
 
         private void AlphaFadeList(float alpha)
         {
-            LMotion.Create(_listCanvasGroup.alpha, alpha, _alphaFadeSpeed).BindToAlpha(_listCanvasGroup);
+            LMotion.Create(_listCanvasGroup.alpha, alpha, _alphaFadeSpeed)
+                .BindToAlpha(_listCanvasGroup)
+                .AddTo(_listCanvasGroup.gameObject);
         }
 
         /// <summary>
@@ -859,7 +856,6 @@ namespace HiddenAchievement.CrossguardUi
 
             _blocker = null;
             Select();
-            OnDropdownClosed?.Invoke();
         }
 
         private IEnumerator DelayedDestroyDropdownList(float delay)
