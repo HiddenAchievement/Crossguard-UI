@@ -74,6 +74,7 @@ namespace HiddenAchievement.CrossguardUi
             if (Transitioner.IsInteractable != interactable)
             {
                 Transitioner.IsInteractable = interactable;
+                if (_axisControlHelper == null) return;
                 _axisControlHelper.OnInteractableChanged(interactable);
             }
         }
