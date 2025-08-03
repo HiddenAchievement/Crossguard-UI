@@ -94,10 +94,13 @@ namespace HiddenAchievement.CrossguardUi
             }
 
             SetCrossToggleGroup(_crossGroup, false);
+
+            onValueChanged.AddListener(ProcessInternalToggle);
         }
         
         protected override void OnDisable()
         {
+            onValueChanged.RemoveListener(ProcessInternalToggle);
             SetCrossToggleGroup(null, false);
             base.OnDisable();
         }
@@ -128,6 +131,11 @@ namespace HiddenAchievement.CrossguardUi
             // Note: Don't refer to m_Group here as it's not guaranteed to have been set.
             if (newGroup != null && isOn && IsActive())
                 newGroup.NotifyToggleOn(this, false);
+        }
+
+        private void ProcessInternalToggle(bool _)
+        {
+            UpdateCheckedFlag(false);
         }
         
         private void UpdateCheckedFlag(bool immediate)

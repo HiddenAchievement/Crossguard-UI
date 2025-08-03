@@ -2,6 +2,14 @@
 
 All notable end-user facing changes should be documented in this file.
 
+## [1.1.9] 2025-08-03
+
+### Fixed
+
+- `CrossUguiToggle` should now support the Checked state correctly.
+
+
+
 ## [1.1.8] 2025-08-03
 
 ### Fixed
