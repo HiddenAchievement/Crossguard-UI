@@ -227,6 +227,7 @@ namespace HiddenAchievement.CrossguardUi
         /// <param name="eventData">The associated event data.</param>
         public void OnPointerClick(PointerEventData eventData)
         {
+            if (!interactable) return;
             Show();
             EnsureSelectedItemVisible();
         }
@@ -237,6 +238,7 @@ namespace HiddenAchievement.CrossguardUi
         /// <param name="eventData">The associated event data.</param>
         public void OnSubmit(BaseEventData eventData)
         {
+            if (!interactable) return;
             Show();
             EnsureSelectedItemVisible();
         }

@@ -942,12 +942,7 @@ namespace HiddenAchievement.CrossguardUi
             templateScrollRect.verticalScrollbarSpacing = -3;
             templateScrollRect.scrollSensitivity = 20;
 
-            Mask scrollRectMask = viewport.AddComponent<Mask>();
-            scrollRectMask.showMaskGraphic = false;
-
-            Image viewportImage = viewport.AddComponent<Image>();
-            viewportImage.sprite = resources.Mask;
-            viewportImage.type = Image.Type.Sliced;
+            viewport.AddComponent<RectMask2D>();
 
             // Setup dropdown UI components.
 
@@ -1139,12 +1134,7 @@ namespace HiddenAchievement.CrossguardUi
             templateScrollRect.verticalScrollbarSpacing = -3;
             templateScrollRect.scrollSensitivity = 20;
 
-            Mask scrollRectMask = viewport.AddComponent<Mask>();
-            scrollRectMask.showMaskGraphic = false;
-
-            Image viewportImage = viewport.AddComponent<Image>();
-            viewportImage.sprite = resources.Mask;
-            viewportImage.type = Image.Type.Sliced;
+            viewport.AddComponent<RectMask2D>();
 
             // Setup dropdown UI components.
 
@@ -1320,12 +1310,7 @@ namespace HiddenAchievement.CrossguardUi
             rootImage.type = Image.Type.Sliced;
             rootImage.color = Color.white;
 
-            Mask viewportMask = viewport.AddComponent<Mask>();
-            viewportMask.showMaskGraphic = false;
-
-            Image viewportImage = viewport.AddComponent<Image>();
-            viewportImage.sprite = resources.Mask;
-            viewportImage.type = Image.Type.Sliced;
+            viewport.AddComponent<RectMask2D>();
 
             return root;
         }

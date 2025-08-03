@@ -2,6 +2,15 @@
 
 All notable end-user facing changes should be documented in this file.
 
+## [1.1.8] 2025-08-03
+
+### Fixed
+
+- Dropdowns should no longer try to do anything in `OnPointerClick` and `OnSubmit` when they're not interactable.
+- Editor construction scripts should now use `RectMask2D` instead of an image mask.
+- Editor construction scripts have been moved to the Editor folder.
+- Fixed a typo in the documentation.
+
 ## [1.1.7] 2025-07-11
 
 ### Added

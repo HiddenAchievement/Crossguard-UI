@@ -59,6 +59,7 @@ namespace HiddenAchievement.CrossguardUi
         public override void OnPointerClick(PointerEventData eventData)
         {
             base.OnPointerClick(eventData);
+            if (!interactable) return;
             EnsureSelectedItemVisible();
             OnShowDropdown?.Invoke();
         }
@@ -70,6 +71,7 @@ namespace HiddenAchievement.CrossguardUi
         public override void OnSubmit(BaseEventData eventData)
         {
             base.OnSubmit(eventData);
+            if (!interactable) return;
             EnsureSelectedItemVisible();
             OnShowDropdown?.Invoke();
         }
