@@ -2,13 +2,18 @@
 
 All notable end-user facing changes should be documented in this file.
 
+## [1.1.10] 2025-08-04
+
+### Fixed
+
+- Fixed some edge conditions associated with enabling/disabling components that are affected by transitioners.
+- Fixed some minor construction-time errors.
+
 ## [1.1.9] 2025-08-03
 
 ### Fixed
 
 - `CrossUguiToggle` should now support the Checked state correctly.
-
-
 
 ## [1.1.8] 2025-08-03
 

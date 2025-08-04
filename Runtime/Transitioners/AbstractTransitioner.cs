@@ -17,7 +17,7 @@ namespace HiddenAchievement.CrossguardUi
     /// Provides a base class for all Crossguard Transitioners.
     /// </summary>
     public abstract class AbstractTransitioner : MonoBehaviour, ITransitioner, IPointerDownHandler, IPointerUpHandler,
-        IPointerEnterHandler, IPointerExitHandler, ISelectHandler, IDeselectHandler, /*IMoveHandler,*/ INextFieldHandler, IPrevFieldHandler
+        IPointerEnterHandler, IPointerExitHandler, ISelectHandler, IDeselectHandler, INextFieldHandler, IPrevFieldHandler
     {
         [SerializeField]
         [Tooltip("(Optional) Previous item in a tab navigation sequence.")]
@@ -63,7 +63,6 @@ namespace HiddenAchievement.CrossguardUi
         private void OnEnable()
         {
             Initialize();
-            ResetState();
             // Make sure these match.
             if (_selectable != null)
             {
@@ -77,6 +76,11 @@ namespace HiddenAchievement.CrossguardUi
                     StartCoroutine(SelectAtEndOfFrame());
                 }              
             }
+        }
+
+        private void OnDisable()
+        {
+            ResetState();
         }
 
         private void Initialize()
@@ -191,13 +195,6 @@ namespace HiddenAchievement.CrossguardUi
                 _selectionIndicator.Deselect((RectTransform)transform);
             }
         }
-        
-        /*
-        public void OnMove(AxisEventData eventData)
-        {
-            s_axisNavMode = true;
-        }
-        */
 
         public void OnNextField(BaseEventData eventData)
         {
@@ -288,9 +285,12 @@ namespace HiddenAchievement.CrossguardUi
 
         public void ResetState()
         {
-            for (int i = 1; i < (int)_stateFlags.Length; i++)
+            for (int i = 1; i < _stateFlags.Length; i++)
             {
-                _stateFlags[i] = false;
+                if (_stateFlags[i])
+                {
+                    ClearStateFlag((InteractState)i, true, true);
+                }
             }
             SetStateFlag(InteractState.Normal, true, true);
         }

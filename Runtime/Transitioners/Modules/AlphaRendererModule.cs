@@ -47,6 +47,7 @@ namespace HiddenAchievement.CrossguardUi.Modules
         public void Transition(Transform component, IStyleModuleRule rule)
         {
             if (rule is not AlphaRendererModuleRule alphaRule) return;
+            StopTween();
             SetOnlyAlpha(_componentCache[component], alphaRule.Alpha);
         }
 
@@ -54,6 +55,7 @@ namespace HiddenAchievement.CrossguardUi.Modules
         public void Transition(Transform component, IStyleModuleRule rule, float duration, Ease easing)
         {
             if (rule is not AlphaRendererModuleRule alphaRule) return;
+            StopTween();
             CanvasRenderer renderer = _componentCache[component];
             _motionHandle = LMotion.Create(renderer.GetColor().a, alphaRule.Alpha, duration)
                 .WithEase(easing)
@@ -77,9 +79,9 @@ namespace HiddenAchievement.CrossguardUi.Modules
 
         private void StopTween()
         {
-            if (_motionHandle != MotionHandle.None && _motionHandle.IsPlaying())
+            if (_motionHandle != MotionHandle.None)
             {
-                _motionHandle.Cancel();
+                _motionHandle.TryCancel();
             }
             _motionHandle = MotionHandle.None;
         }

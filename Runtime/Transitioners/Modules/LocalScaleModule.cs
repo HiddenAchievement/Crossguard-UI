@@ -44,6 +44,7 @@ namespace HiddenAchievement.CrossguardUi.Modules
         public void Transition(Transform component, IStyleModuleRule rule)
         {
             if (rule is not LocalScaleModuleRule scaleRule) return;
+            StopTween();
             component.localScale = new Vector3(scaleRule.Scale.x, scaleRule.Scale.y, 1);
         }
 
@@ -51,6 +52,7 @@ namespace HiddenAchievement.CrossguardUi.Modules
         public void Transition(Transform component, IStyleModuleRule rule, float duration, Ease easing)
         {
             if (rule is not LocalScaleModuleRule scaleRule) return;
+            StopTween();
             _motionHandle = LMotion.Create(component.localScale, scaleRule.Scale, duration)
                 .WithEase(easing)
                 .BindToLocalScale(component);
@@ -64,9 +66,9 @@ namespace HiddenAchievement.CrossguardUi.Modules
 
         private void StopTween()
         {
-            if (_motionHandle != MotionHandle.None && _motionHandle.IsPlaying())
+            if (_motionHandle != MotionHandle.None)
             {
-                _motionHandle.Cancel();
+                _motionHandle.TryCancel();
             }
             _motionHandle = MotionHandle.None;
         }

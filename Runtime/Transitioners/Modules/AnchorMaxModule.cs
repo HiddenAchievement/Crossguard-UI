@@ -39,6 +39,7 @@ namespace HiddenAchievement.CrossguardUi.Modules
         public void ForceComponentRule(Transform component, IStyleModuleRule rule)
         {
             if (rule is not AnchorMaxModuleRule anchorMaxRule) return;
+            StopTween();
             RectTransform rtComponent = (RectTransform)component;
             rtComponent.anchorMax = anchorMaxRule.AnchorMax;
         }
@@ -47,6 +48,7 @@ namespace HiddenAchievement.CrossguardUi.Modules
         public void Transition(Transform component, IStyleModuleRule rule)
         {
             if (rule is not AnchorMaxModuleRule anchorMaxRule) return;
+            StopTween();
             RectTransform rtComponent = (RectTransform)component;
             rtComponent.anchorMax = anchorMaxRule.AnchorMax;
         }
@@ -69,9 +71,9 @@ namespace HiddenAchievement.CrossguardUi.Modules
 
         private void StopTween()
         {
-            if (_motionHandle != MotionHandle.None && _motionHandle.IsPlaying())
+            if (_motionHandle != MotionHandle.None)
             {
-                _motionHandle.Cancel();
+                _motionHandle.TryCancel();
             }
             _motionHandle = MotionHandle.None;
         }

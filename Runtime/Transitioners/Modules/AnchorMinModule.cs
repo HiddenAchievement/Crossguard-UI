@@ -47,6 +47,7 @@ namespace HiddenAchievement.CrossguardUi.Modules
         public void Transition(Transform component, IStyleModuleRule rule)
         {
             if (rule is not AnchorMinModuleRule anchorMinRule) return;
+            StopTween();
             RectTransform rtComponent = (RectTransform)component;
             rtComponent.anchorMin = anchorMinRule.AnchorMin;
         }
@@ -55,6 +56,7 @@ namespace HiddenAchievement.CrossguardUi.Modules
         public void Transition(Transform component, IStyleModuleRule rule, float duration, Ease easing)
         {
             if (rule is not AnchorMinModuleRule anchorMinRule) return;
+            StopTween();
             RectTransform rtComponent = (RectTransform)component;
             _motionHandle = LMotion.Create(rtComponent.anchorMin, anchorMinRule.AnchorMin, duration)
                 .WithEase(easing)
@@ -69,9 +71,9 @@ namespace HiddenAchievement.CrossguardUi.Modules
 
         private void StopTween()
         {
-            if (_motionHandle != MotionHandle.None && _motionHandle.IsPlaying())
+            if (_motionHandle != MotionHandle.None)
             {
-                _motionHandle.Cancel();
+                _motionHandle.TryCancel();
             }
             _motionHandle = MotionHandle.None;
         }

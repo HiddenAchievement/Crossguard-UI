@@ -44,6 +44,7 @@ namespace HiddenAchievement.CrossguardUi.Modules
         public void Transition(Transform component, IStyleModuleRule rule)
         {
             if (rule is not LocalRotationModuleRule rotationRule) return;
+            StopTween();
             component.localEulerAngles = rotationRule.Rotation;
         }
 
@@ -51,6 +52,7 @@ namespace HiddenAchievement.CrossguardUi.Modules
         public void Transition(Transform component, IStyleModuleRule rule, float duration, Ease easing)
         {
             if (rule is not LocalRotationModuleRule rotationRule) return;
+            StopTween();
             _motionHandle = LMotion.Create(component.localEulerAngles, rotationRule.Rotation, duration)
                 .WithEase(easing)
                 .BindToLocalEulerAngles(component);
@@ -66,7 +68,7 @@ namespace HiddenAchievement.CrossguardUi.Modules
         {
             if (_motionHandle != MotionHandle.None && _motionHandle.IsPlaying())
             {
-                _motionHandle.Cancel();
+                _motionHandle.TryCancel();
             }
             _motionHandle = MotionHandle.None;
         }

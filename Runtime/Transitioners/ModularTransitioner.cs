@@ -56,12 +56,14 @@ namespace HiddenAchievement.CrossguardUi
         /// <inheritdoc />
         protected override void ClearAllComponents()
         {
+            if (_style == null) return;
             ModularTransitionManager.ClearAllComponents(transform, _style.NormalState);
         }
 
         /// <inheritdoc />
         protected override void ForceAppearance(InteractState state)
         {
+            if (_style == null) return;
             ModularTransitionManager.ForceAppearance(transform, state switch
             {
                 InteractState.Normal      => _style.NormalState,

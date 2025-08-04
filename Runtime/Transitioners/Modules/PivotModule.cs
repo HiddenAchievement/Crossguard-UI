@@ -46,6 +46,7 @@ namespace HiddenAchievement.CrossguardUi.Modules
         public void Transition(Transform component, IStyleModuleRule rule)
         {
             if (rule is not PivotModuleRule pivotRule) return;
+            StopTween();
             RectTransform rtComponent = (RectTransform)component;
             rtComponent.pivot = pivotRule.Pivot;
         }
@@ -54,6 +55,7 @@ namespace HiddenAchievement.CrossguardUi.Modules
         public void Transition(Transform component, IStyleModuleRule rule, float duration, Ease easing)
         {
             if (rule is not PivotModuleRule pivotRule) return;
+            StopTween();
             RectTransform rtComponent = (RectTransform)component;
             _motionHandle = LMotion.Create(rtComponent.pivot, pivotRule.Pivot, duration)
                 .WithEase(easing)
@@ -68,9 +70,9 @@ namespace HiddenAchievement.CrossguardUi.Modules
 
         private void StopTween()
         {
-            if (_motionHandle != MotionHandle.None && _motionHandle.IsPlaying())
+            if (_motionHandle != MotionHandle.None)
             {
-                _motionHandle.Cancel();
+                _motionHandle.TryCancel();
             }
             _motionHandle = MotionHandle.None;
         }

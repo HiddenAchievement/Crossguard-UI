@@ -53,6 +53,7 @@ namespace HiddenAchievement.CrossguardUi.Modules
         public void Transition(Transform component, IStyleModuleRule rule)
         {
             if (rule is not ImageFillModuleRule fillRule) return;
+            StopTween();
             Image image = _componentCache[component];
             if (image == null) return;
             image.fillAmount = fillRule.Fill;
@@ -62,6 +63,7 @@ namespace HiddenAchievement.CrossguardUi.Modules
         public void Transition(Transform component, IStyleModuleRule rule, float duration, Ease easing)
         {
             if (rule is not ImageFillModuleRule fillRule) return;
+            StopTween();
             Image image = _componentCache[component];
             _motionHandle = LMotion.Create(image.fillAmount, fillRule.Fill, duration)
                 .WithEase(easing)
@@ -77,9 +79,9 @@ namespace HiddenAchievement.CrossguardUi.Modules
         
         private void StopTween()
         {
-            if (_motionHandle != MotionHandle.None && _motionHandle.IsPlaying())
+            if (_motionHandle != MotionHandle.None)
             {
-                _motionHandle.Cancel();
+                _motionHandle.TryCancel();
             }
             _motionHandle = MotionHandle.None;
         }
