@@ -79,7 +79,6 @@ namespace HiddenAchievement.CrossguardUi
         protected override void Start()
         {
             base.Start();
-            UpdateCheckedFlag(true);
         }
 
         protected override void OnEnable()
@@ -94,7 +93,7 @@ namespace HiddenAchievement.CrossguardUi
             }
 
             SetCrossToggleGroup(_crossGroup, false);
-
+            UpdateCheckedFlag(true);
             onValueChanged.AddListener(ProcessInternalToggle);
         }
         

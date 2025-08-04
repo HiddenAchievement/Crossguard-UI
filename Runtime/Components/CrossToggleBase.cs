@@ -153,11 +153,6 @@ namespace HiddenAchievement.CrossguardUi
         /// <param name="instant">Jump immediately to the end of the transition, instead of playing the animation.</param>
         protected virtual void PlayEffect(bool instant) {}
 
-        protected override void Start()
-        {
-            UpdateAppearance(true);
-        }
-
         private void InternalToggle()
         {
             if (!IsActive() || !IsInteractable())

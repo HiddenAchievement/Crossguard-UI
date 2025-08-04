@@ -13,7 +13,7 @@ namespace HiddenAchievement.CrossguardUi
         {
             public IStyleModule Module;
             public readonly List<IStyleModuleRule> StyleRules = new();
-            public int ActiveState;
+            public int ActiveState = -1;
             
             public void Initialize(int stateCount)
             {
@@ -29,8 +29,8 @@ namespace HiddenAchievement.CrossguardUi
 
             public void Reset()
             {
-                Module      = null;
-                ActiveState = 0;
+                Module = null;
+                ActiveState = -1;
                 StyleRules.Clear();
             }
         }
@@ -280,17 +280,14 @@ namespace HiddenAchievement.CrossguardUi
 
             if (rule == null)
             {
-                if (_mutuallyExclusive && settings.ActiveState != 0)
-                {
-                    // If this is mutually exclusive, we should still turn off the current state for this component/module.
-                    settings.ActiveState = 0;
-                    rule = settings.StyleRules[0];
-                    TransitionComponentByRule(component, settings.Module, rule, immediate, easing);
-                }
-                else
-                {
-                    return; // If there is no rule, we have nothing to do.
-                }
+                if (!_mutuallyExclusive || settings.ActiveState == 0) return;
+
+                // If this is mutually exclusive, we should still turn off the current state for this component/module.
+                settings.ActiveState = 0;
+                rule = settings.StyleRules[0];
+                TransitionComponentByRule(component, settings.Module, rule, immediate, easing);
+
+                return;
             }
             
             // Next, run the transition.
