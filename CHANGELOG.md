@@ -2,6 +2,13 @@
 
 All notable end-user facing changes should be documented in this file.
 
+## [1.1.11] 2025-08-04
+
+### Fixed
+
+- Fixed an issue where Modular Transitioner didn't initialize into Normal state properly.
+- Fixed an issue where `CrossUguiToggle` didn't set the checked state correctly when being reactivated.
+
 ## [1.1.10] 2025-08-04
 
 ### Fixed
