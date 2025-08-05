@@ -12,7 +12,7 @@ namespace HiddenAchievement.CrossguardUi
     /// A base implementation for basic Toggle behavior that can be used for additional custom Crossguard toggles.
     /// </summary>
     [RequireComponent(typeof(RectTransform))]
-    public class CrossToggleBase : CrossSelectable, IPointerClickHandler, ISubmitHandler, ICanvasElement, ICrossToggle
+    public class CrossRevampToggleBase : CrossSelectable, IPointerClickHandler, ISubmitHandler, ICanvasElement, ICrossToggle
     {
         public const int NoId = int.MinValue;
         

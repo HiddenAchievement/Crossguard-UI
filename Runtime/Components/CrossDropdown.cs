@@ -7,7 +7,7 @@ using UnityEngine.UI;
 
 namespace HiddenAchievement.CrossguardUi
 {
-    public class CrossUguiDropdown : TMP_Dropdown
+    public class CrossDropdown : TMP_Dropdown
     {
         private ITransitioner _transitioner;
         private ScrollRect _scrollRect;

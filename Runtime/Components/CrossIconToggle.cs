@@ -10,7 +10,7 @@ namespace HiddenAchievement.CrossguardUi
     /// A Toggle that swaps icons when you click on it.
     /// </summary>
     [Obsolete("No longer necessary. Effect can be accomplished with the Checked state.", false)]
-    public class CrossIconToggle : CrossToggleBase
+    public class CrossIconToggle : CrossRevampToggleBase
     {
         [SerializeField]
         private Image _icon = null;

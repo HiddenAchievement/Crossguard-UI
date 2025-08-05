@@ -415,14 +415,14 @@ namespace HiddenAchievement.CrossguardUi
         /// </remarks>
         /// <param name="resources">The resources to use for creation.</param>
         /// <returns>The root GameObject of the created element.</returns>
-        public static GameObject CreateUguiToggle(Resources resources)
+        public static GameObject CreateToggle(Resources resources)
         {
             GameObject toggleRoot = CreateUIElementRoot("Toggle", s_ThinSquareElementSize);
             GameObject selector   = CreateUIObject("Selector", toggleRoot);
             GameObject background = CreateUIObject("Background", toggleRoot);
             GameObject checkmark  = CreateUIObject("Checkmark", background);
 
-            CrossUguiToggle crossToggle = toggleRoot.AddComponent<CrossUguiToggle>();
+            CrossToggle crossToggle = toggleRoot.AddComponent<CrossToggle>();
             crossToggle.transition = Selectable.Transition.None;
             crossToggle.IsOn       = true;
 
@@ -960,7 +960,7 @@ namespace HiddenAchievement.CrossguardUi
         /// </remarks>
         /// <param name="resources">The resources to use for creation.</param>
         /// <returns>The root GameObject of the created element.</returns>
-        public static GameObject CreateUguiDropdown(Resources resources)
+        public static GameObject CreateDropdown(Resources resources)
         {
             GameObject root           = CreateUIElementRoot("Dropdown", s_ThickElementSize);
             GameObject button         = CreateUIObject("Button", root);
@@ -1007,7 +1007,7 @@ namespace HiddenAchievement.CrossguardUi
             Image itemCheckmarkImage = itemCheckmark.AddComponent<Image>();
             itemCheckmarkImage.sprite = resources.Checkmark;
 
-            CrossUguiToggle itemCrossToggle = item.AddComponent<CrossUguiToggle>();
+            CrossToggle itemCrossToggle = item.AddComponent<CrossToggle>();
             itemCrossToggle.graphic = itemCheckmarkImage;
             itemCrossToggle.IsOn    = true;
 
@@ -1051,7 +1051,7 @@ namespace HiddenAchievement.CrossguardUi
             buttonRT.anchorMax = new Vector2(1, 1);
             buttonRT.sizeDelta = new Vector2(0, 0);
 
-            CrossUguiDropdown dropdown = root.AddComponent<CrossUguiDropdown>();
+            CrossDropdown dropdown = root.AddComponent<CrossDropdown>();
             dropdown.targetGraphic = backgroundImage;
             dropdown.template      = template.GetComponent<RectTransform>();
             dropdown.captionText   = labelText;

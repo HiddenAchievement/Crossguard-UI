@@ -2,6 +2,20 @@
 
 All notable end-user facing changes should be documented in this file.
 
+## [1.2.0] 2025-08-05
+
+### Changed
+
+- Now that they have override equivalents, the non-override UI components have had their names changed to include the
+  text `Revamp`, to clarify that these are not overrides.
+- All Revamp logic has been moved within a `CROSSGUARD_REVAMP` define guard, so they can be excluded from deployments
+  that don't use them.
+- The override components have been renamed from `CrossUguiToggle` to `CrossToggle` and from `CrossUguiDropdown` to
+  `CrossDropdown`.
+- `CrossSlideToggle`, `CrossIconToggle`, and `CrossTextToggle` are now deprecated, since their functionality can be
+  achieved, using the `Checked` state with a `ModularTransitione`.
+- Documentation has been updated.
+
 ## [1.1.11] 2025-08-04
 
 ### Fixed

@@ -10,7 +10,7 @@ namespace HiddenAchievement.CrossguardUi
     /// A standard slide-toggle.
     /// </summary>
     [Obsolete("No longer necessary. Effect can be accomplished with the Checked state.", false)]
-    public class CrossSlideToggle : CrossToggleBase
+    public class CrossSlideToggle : CrossRevampToggleBase
     {
         [SerializeField]
         private RectTransform _fill = null;

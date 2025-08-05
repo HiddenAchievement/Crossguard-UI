@@ -4,9 +4,9 @@ using UnityEditor.UI;
 
 namespace HiddenAchievement.CrossguardUi
 {
-    [CustomEditor(typeof(CrossUguiToggle), true)]
+    [CustomEditor(typeof(CrossToggle), true)]
     [CanEditMultipleObjects]
-    public class CrossUguiToggleEditor : ToggleEditor
+    public class CrossToggleEditor : ToggleEditor
     {
         private SerializedProperty _crossGroupProperty;
         private SerializedProperty _idProperty;

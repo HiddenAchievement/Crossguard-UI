@@ -34,7 +34,7 @@ namespace HiddenAchievement.CrossguardUi
 
 #if CROSS_REVAMP
         [MenuItem("GameObject/UI/Crossguard UI/Toggle (Revamp)", false, 1100)]
-        public static void AddToggle(MenuCommand menuCommand)
+        public static void AddRevampToggle(MenuCommand menuCommand)
         {
             GameObject go = CrossDefaultControls.CreateRevampToggle(GetStandardResources());
             PlaceUIElementRoot(go, menuCommand);            
@@ -42,9 +42,9 @@ namespace HiddenAchievement.CrossguardUi
 #endif // CROSS_REVAMP
 
         [MenuItem("GameObject/UI/Crossguard UI/Toggle", false, 1104)]
-        public static void AddUguiToggle(MenuCommand menuCommand)
+        public static void AddToggle(MenuCommand menuCommand)
         {
-            GameObject go = CrossDefaultControls.CreateUguiToggle(GetStandardResources());
+            GameObject go = CrossDefaultControls.CreateToggle(GetStandardResources());
             PlaceUIElementRoot(go, menuCommand);
         }
 
@@ -84,7 +84,7 @@ namespace HiddenAchievement.CrossguardUi
         }
 #if CROSS_REVAMP
         [MenuItem("GameObject/UI/Crossguard UI/Dropdown (Revamp)", false, 1301)]
-        public static void AddDropdown(MenuCommand menuCommand)
+        public static void AddRevampDropdown(MenuCommand menuCommand)
         {
             GameObject go = CrossDefaultControls.CreateRevampDropdown(GetStandardResources());
             PlaceUIElementRoot(go, menuCommand);              
@@ -92,9 +92,9 @@ namespace HiddenAchievement.CrossguardUi
 #endif // CROSS_REVAMP
 
         [MenuItem("GameObject/UI/Crossguard UI/Dropdown", false, 1301)]
-        public static void AddUguiDropdown(MenuCommand menuCommand)
+        public static void AddDropdown(MenuCommand menuCommand)
         {
-            GameObject go = CrossDefaultControls.CreateUguiDropdown(GetStandardResources());
+            GameObject go = CrossDefaultControls.CreateDropdown(GetStandardResources());
             PlaceUIElementRoot(go, menuCommand);              
         }
         

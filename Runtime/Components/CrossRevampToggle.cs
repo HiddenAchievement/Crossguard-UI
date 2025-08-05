@@ -8,7 +8,7 @@ namespace HiddenAchievement.CrossguardUi
     /// <summary>
     /// A Toggle slightly customized to work with TweenTransitioner.
     /// </summary>
-    public class CrossRevampToggle : CrossToggleBase
+    public class CrossRevampToggle : CrossRevampToggleBase
 	{
         /// <summary>
         /// Display settings for when a toggle is activated or deactivated.

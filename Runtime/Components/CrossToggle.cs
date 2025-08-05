@@ -9,7 +9,7 @@ namespace HiddenAchievement.CrossguardUi
     /// <summary>
     /// This will allow you to make Legacy UGUI toggles that are fully Crossguard-compatible.
     /// </summary>
-    public class CrossUguiToggle : Toggle, ICrossToggle
+    public class CrossToggle : Toggle, ICrossToggle
     {
         public const int NoId = int.MinValue;
         

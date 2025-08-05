@@ -10,7 +10,7 @@ namespace HiddenAchievement.CrossguardUi
     /// A toggle which swaps text, based on on/off state.
     /// </summary>
     [Obsolete("No longer necessary. Effect can be accomplished with the Checked state.", false)]
-    public class CrossTextToggle : CrossToggleBase
+    public class CrossTextToggle : CrossRevampToggleBase
     {
         [SerializeField]
         private TextMeshProUGUI _label = null;
