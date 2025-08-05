@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using LitMotion;
 using LitMotion.Extensions;
 using UnityEngine;
@@ -7,8 +8,7 @@ namespace HiddenAchievement.CrossguardUi.Modules
     public class AnchorMinModule : IStyleModule
     {
         private static readonly CrossInstancePool<AnchorMinModule> s_pool = new(() => new AnchorMinModule());
-
-        private MotionHandle _motionHandle = MotionHandle.None;
+        private readonly Dictionary<Transform, RectTransformEntry> _componentCache = new();
         
         public static AnchorMinModule Create()
         {
@@ -24,7 +24,7 @@ namespace HiddenAchievement.CrossguardUi.Modules
         /// <inheritdoc />
         public void CacheComponent(Transform component)
         {
-            // We just need the transform, so there's nothing to cache.
+            _componentCache[component] = RectTransformEntry.Create(component);
         }
 
         /// <inheritdoc />
@@ -47,35 +47,30 @@ namespace HiddenAchievement.CrossguardUi.Modules
         public void Transition(Transform component, IStyleModuleRule rule)
         {
             if (rule is not AnchorMinModuleRule anchorMinRule) return;
-            StopTween();
-            RectTransform rtComponent = (RectTransform)component;
-            rtComponent.anchorMin = anchorMinRule.AnchorMin;
+            RectTransformEntry entry = _componentCache[component];
+            entry.StopTween();
+            entry.Component.anchorMin = anchorMinRule.AnchorMin;
         }
 
         /// <inheritdoc />
         public void Transition(Transform component, IStyleModuleRule rule, float duration, Ease easing)
         {
             if (rule is not AnchorMinModuleRule anchorMinRule) return;
-            StopTween();
-            RectTransform rtComponent = (RectTransform)component;
-            _motionHandle = LMotion.Create(rtComponent.anchorMin, anchorMinRule.AnchorMin, duration)
+            RectTransformEntry entry = _componentCache[component];
+            entry.StopTween();
+            entry.Tween = LMotion.Create(entry.Component.anchorMin, anchorMinRule.AnchorMin, duration)
                 .WithEase(easing)
-                .BindToAnchorMin(rtComponent);
+                .BindToAnchorMin(entry.Component);
         }
 
         /// <inheritdoc />
         public void Reset()
         {
-            StopTween();
-        }
-
-        private void StopTween()
-        {
-            if (_motionHandle != MotionHandle.None)
+            foreach (RectTransformEntry entry in _componentCache.Values)
             {
-                _motionHandle.TryCancel();
+                entry.Free();
             }
-            _motionHandle = MotionHandle.None;
+            _componentCache.Clear();
         }
         
         private AnchorMinModule()

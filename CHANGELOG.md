@@ -2,6 +2,12 @@
 
 All notable end-user facing changes should be documented in this file.
 
+## [1.2.1] 2025-08-05
+
+### Fixed
+
+- Concurrent transition tweens of the same type should no longer cancel each other.
+
 ## [1.2.0] 2025-08-05
 
 ### Changed

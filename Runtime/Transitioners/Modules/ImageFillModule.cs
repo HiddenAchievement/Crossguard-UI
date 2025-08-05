@@ -9,9 +9,7 @@ namespace HiddenAchievement.CrossguardUi.Modules
     public class ImageFillModule : IStyleModule
     {
         private static readonly CrossInstancePool<ImageFillModule> s_pool = new(() => new ImageFillModule());
-        private readonly Dictionary<Transform, Image> _componentCache = new();
-
-        private MotionHandle _motionHandle = MotionHandle.None;
+        private readonly Dictionary<Transform, ImageEntry> _componentCache = new();
         
         public static ImageFillModule Create()
         {
@@ -27,9 +25,7 @@ namespace HiddenAchievement.CrossguardUi.Modules
         /// <inheritdoc />
         public void CacheComponent(Transform component)
         {
-            Image image = component.GetComponent<Image>();
-            Debug.Assert(image != null);
-            _componentCache[component] = image;
+            _componentCache[component] = ImageEntry.Create(component);
         }
         
         /// <inheritdoc />
@@ -53,37 +49,30 @@ namespace HiddenAchievement.CrossguardUi.Modules
         public void Transition(Transform component, IStyleModuleRule rule)
         {
             if (rule is not ImageFillModuleRule fillRule) return;
-            StopTween();
-            Image image = _componentCache[component];
-            if (image == null) return;
-            image.fillAmount = fillRule.Fill;
+            ImageEntry entry = _componentCache[component];
+            entry.StopTween();
+            entry.Component.fillAmount = fillRule.Fill;
         }
 
         /// <inheritdoc />
         public void Transition(Transform component, IStyleModuleRule rule, float duration, Ease easing)
         {
             if (rule is not ImageFillModuleRule fillRule) return;
-            StopTween();
-            Image image = _componentCache[component];
-            _motionHandle = LMotion.Create(image.fillAmount, fillRule.Fill, duration)
+            ImageEntry entry = _componentCache[component];
+            entry.StopTween();
+            entry.Tween = LMotion.Create(entry.Component.fillAmount, fillRule.Fill, duration)
                 .WithEase(easing)
-                .BindToFillAmount(image);
+                .BindToFillAmount(entry.Component);
         }
         
         /// <inheritdoc />
         public void Reset()
         {
-            StopTween();
-            _componentCache.Clear();
-        }
-        
-        private void StopTween()
-        {
-            if (_motionHandle != MotionHandle.None)
+            foreach (ImageEntry entry in _componentCache.Values)
             {
-                _motionHandle.TryCancel();
+                entry.Free();
             }
-            _motionHandle = MotionHandle.None;
+            _componentCache.Clear();
         }
         
         private ImageFillModule()

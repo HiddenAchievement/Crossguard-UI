@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using LitMotion;
 using LitMotion.Extensions;
 using UnityEngine;
@@ -7,8 +8,7 @@ namespace HiddenAchievement.CrossguardUi.Modules
     public class AnchorMaxModule : IStyleModule
     {
         private static readonly CrossInstancePool<AnchorMaxModule> s_pool = new(() => new AnchorMaxModule());
-
-        private MotionHandle _motionHandle = MotionHandle.None;
+        private readonly Dictionary<Transform, RectTransformEntry> _componentCache = new();
         
         public static AnchorMaxModule Create()
         {
@@ -24,7 +24,7 @@ namespace HiddenAchievement.CrossguardUi.Modules
         /// <inheritdoc />
         public void CacheComponent(Transform component)
         {
-            // We just need the transform, so there's nothing to cache.
+            _componentCache[component] = RectTransformEntry.Create(component);
         }
 
         /// <inheritdoc />
@@ -39,7 +39,6 @@ namespace HiddenAchievement.CrossguardUi.Modules
         public void ForceComponentRule(Transform component, IStyleModuleRule rule)
         {
             if (rule is not AnchorMaxModuleRule anchorMaxRule) return;
-            StopTween();
             RectTransform rtComponent = (RectTransform)component;
             rtComponent.anchorMax = anchorMaxRule.AnchorMax;
         }
@@ -48,34 +47,30 @@ namespace HiddenAchievement.CrossguardUi.Modules
         public void Transition(Transform component, IStyleModuleRule rule)
         {
             if (rule is not AnchorMaxModuleRule anchorMaxRule) return;
-            StopTween();
-            RectTransform rtComponent = (RectTransform)component;
-            rtComponent.anchorMax = anchorMaxRule.AnchorMax;
+            RectTransformEntry entry = _componentCache[component];
+            entry.StopTween();
+            entry.Component.anchorMax = anchorMaxRule.AnchorMax;
         }
 
         /// <inheritdoc />
         public void Transition(Transform component, IStyleModuleRule rule, float duration, Ease easing)
         {
             if (rule is not AnchorMaxModuleRule anchorMaxRule) return;
-            RectTransform rtComponent = (RectTransform)component;
-            _motionHandle = LMotion.Create(rtComponent.anchorMax, anchorMaxRule.AnchorMax, duration)
+            RectTransformEntry entry = _componentCache[component];
+            entry.StopTween();
+            entry.Tween = LMotion.Create(entry.Component.anchorMax, anchorMaxRule.AnchorMax, duration)
                 .WithEase(easing)
-                .BindToAnchorMax(rtComponent);
+                .BindToAnchorMax(entry.Component);
         }
 
         /// <inheritdoc />
         public void Reset()
         {
-            StopTween();
-        }
-
-        private void StopTween()
-        {
-            if (_motionHandle != MotionHandle.None)
+            foreach (RectTransformEntry entry in _componentCache.Values)
             {
-                _motionHandle.TryCancel();
+                entry.Free();
             }
-            _motionHandle = MotionHandle.None;
+            _componentCache.Clear();
         }
         
         private AnchorMaxModule()

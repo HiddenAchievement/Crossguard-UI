@@ -7,9 +7,7 @@ namespace HiddenAchievement.CrossguardUi.Modules
     public class AlphaRendererModule : IStyleModule
     {
         private static readonly CrossInstancePool<AlphaRendererModule> s_pool = new(() => new AlphaRendererModule());
-        private readonly Dictionary<Transform, CanvasRenderer> _componentCache = new();
-
-        private MotionHandle _motionHandle = MotionHandle.None;
+        private readonly Dictionary<Transform,CanvasRendererEntry> _componentCache = new();
         
         public static AlphaRendererModule Create()
         {
@@ -25,9 +23,7 @@ namespace HiddenAchievement.CrossguardUi.Modules
         /// <inheritdoc />
         public void CacheComponent(Transform component)
         {
-            CanvasRenderer renderer = component.GetComponent<CanvasRenderer>();
-            Debug.Assert(renderer != null);
-            _componentCache[component] = renderer;
+            _componentCache[component] = CanvasRendererEntry.Create(component);
         }
 
         /// <inheritdoc />
@@ -47,25 +43,29 @@ namespace HiddenAchievement.CrossguardUi.Modules
         public void Transition(Transform component, IStyleModuleRule rule)
         {
             if (rule is not AlphaRendererModuleRule alphaRule) return;
-            StopTween();
-            SetOnlyAlpha(_componentCache[component], alphaRule.Alpha);
+            CanvasRendererEntry entry = _componentCache[component];
+            entry.StopTween();
+            SetOnlyAlpha(entry.Component, alphaRule.Alpha);
         }
 
         /// <inheritdoc />
         public void Transition(Transform component, IStyleModuleRule rule, float duration, Ease easing)
         {
             if (rule is not AlphaRendererModuleRule alphaRule) return;
-            StopTween();
-            CanvasRenderer renderer = _componentCache[component];
-            _motionHandle = LMotion.Create(renderer.GetColor().a, alphaRule.Alpha, duration)
+            CanvasRendererEntry entry = _componentCache[component];
+            entry.StopTween();
+            entry.Tween = LMotion.Create(entry.Component.GetColor().a, alphaRule.Alpha, duration)
                 .WithEase(easing)
-                .BindToColorA(renderer);
+                .BindToColorA(entry.Component);
         }
 
         /// <inheritdoc />
         public void Reset()
         {
-            StopTween();
+            foreach (CanvasRendererEntry entry in _componentCache.Values)
+            {
+                entry.Free();
+            }
             _componentCache.Clear();
         }
 
@@ -77,15 +77,6 @@ namespace HiddenAchievement.CrossguardUi.Modules
             renderer.SetColor(color);
         }
 
-        private void StopTween()
-        {
-            if (_motionHandle != MotionHandle.None)
-            {
-                _motionHandle.TryCancel();
-            }
-            _motionHandle = MotionHandle.None;
-        }
-        
         private AlphaRendererModule()
         {
         }

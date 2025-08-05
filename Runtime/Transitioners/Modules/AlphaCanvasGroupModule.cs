@@ -8,9 +8,7 @@ namespace HiddenAchievement.CrossguardUi.Modules
     public class AlphaCanvasGroupModule  : IStyleModule
     {
         private static readonly CrossInstancePool<AlphaCanvasGroupModule> s_pool = new(() => new AlphaCanvasGroupModule());
-        private readonly Dictionary<Transform, CanvasGroup> _componentCache = new();
-
-        private MotionHandle _motionHandle = MotionHandle.None;
+        private readonly Dictionary<Transform, CanvasGroupEntry> _componentCache = new();
         
         public static AlphaCanvasGroupModule Create()
         {
@@ -26,9 +24,7 @@ namespace HiddenAchievement.CrossguardUi.Modules
         /// <inheritdoc />
         public void CacheComponent(Transform component)
         {
-            CanvasGroup canvasGroup = component.GetComponent<CanvasGroup>();
-            Debug.Assert(canvasGroup != null);
-            _componentCache[component] = canvasGroup;
+            _componentCache[component] = CanvasGroupEntry.Create(component);
         }
 
         /// <inheritdoc />
@@ -52,39 +48,30 @@ namespace HiddenAchievement.CrossguardUi.Modules
         public void Transition(Transform component, IStyleModuleRule rule)
         {
             if (rule is not AlphaCanvasGroupModuleRule alphaRule) return;
-            StopTween();
-            CanvasGroup canvasGroup = component.GetComponent<CanvasGroup>();
-            if (canvasGroup != null)
-            {
-                component.GetComponent<CanvasGroup>().alpha = alphaRule.Alpha;
-            }
+            CanvasGroupEntry entry = _componentCache[component];
+            entry.StopTween();
+            entry.Component.alpha = alphaRule.Alpha;
         }
 
         /// <inheritdoc />
         public void Transition(Transform component, IStyleModuleRule rule, float duration, Ease easing)
         {
             if (rule is not AlphaCanvasGroupModuleRule alphaRule) return;
-            StopTween();
-            CanvasGroup canvasGroup = _componentCache[component];
-            _motionHandle = LMotion.Create(canvasGroup.alpha, alphaRule.Alpha, duration)
+            CanvasGroupEntry entry = _componentCache[component];
+            entry.StopTween();
+            entry.Tween = LMotion.Create(entry.Component.alpha, alphaRule.Alpha, duration)
                 .WithEase(easing)
-                .BindToAlpha(canvasGroup);
+                .BindToAlpha(entry.Component);
         }
 
         /// <inheritdoc />
         public void Reset()
         {
-            StopTween();
-            _componentCache.Clear();
-        }
-        
-        private void StopTween()
-        {
-            if (_motionHandle != MotionHandle.None)
+            foreach (CanvasGroupEntry entry in _componentCache.Values)
             {
-                _motionHandle.TryCancel();
+                entry.Free();
             }
-            _motionHandle = MotionHandle.None;
+            _componentCache.Clear();
         }
         
         private AlphaCanvasGroupModule()

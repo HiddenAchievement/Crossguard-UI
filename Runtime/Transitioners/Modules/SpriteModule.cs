@@ -8,7 +8,7 @@ namespace HiddenAchievement.CrossguardUi.Modules
     public class SpriteModule : IStyleModule
     {
         private static readonly CrossInstancePool<SpriteModule> s_pool = new(() => new SpriteModule());
-        private readonly Dictionary<Transform, Image> _componentCache = new();
+        private readonly Dictionary<Transform, ImageEntry> _componentCache = new();
         
         public static SpriteModule Create()
         {
@@ -24,9 +24,7 @@ namespace HiddenAchievement.CrossguardUi.Modules
         /// <inheritdoc />
         public void CacheComponent(Transform component)
         {
-            Image image =  component.GetComponent<Image>();
-            Debug.Assert(image != null);
-            _componentCache[component] = image;
+            _componentCache[component] = ImageEntry.Create(component);
         }
 
         /// <inheritdoc />
@@ -50,23 +48,25 @@ namespace HiddenAchievement.CrossguardUi.Modules
         public void Transition(Transform component, IStyleModuleRule rule)
         {
             if (rule is not SpriteModuleRule spriteRule) return;
-            Image image = component.GetComponent<Image>();
-            if (image == null) return;
-            image.overrideSprite = spriteRule.Sprite;
+            ImageEntry entry = _componentCache[component];
+            entry.Component.overrideSprite = spriteRule.Sprite;
         }
 
         /// <inheritdoc />
         public void Transition(Transform component, IStyleModuleRule rule, float duration, Ease _)
         {
             if (rule is not SpriteModuleRule spriteRule) return;
-            Image image = _componentCache[component];
-            if (image == null) return;
-            image.overrideSprite = spriteRule.Sprite;
+            ImageEntry entry = _componentCache[component];
+            entry.Component.overrideSprite = spriteRule.Sprite;
         }
 
         /// <inheritdoc />
         public void Reset()
         {
+            foreach (ImageEntry entry in _componentCache.Values)
+            {
+                entry.Free();
+            }
             _componentCache.Clear();
         }
         

@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using LitMotion;
 using LitMotion.Extensions;
 using UnityEngine;
@@ -7,8 +8,7 @@ namespace HiddenAchievement.CrossguardUi.Modules
     public class LocalScaleModule : IStyleModule
     {
         private static readonly CrossInstancePool<LocalScaleModule> s_pool = new(() => new LocalScaleModule());
-
-        private MotionHandle _motionHandle = MotionHandle.None;
+        private readonly Dictionary<Transform,TransformEntry> _componentCache = new();
         
         public static LocalScaleModule Create()
         {
@@ -24,7 +24,7 @@ namespace HiddenAchievement.CrossguardUi.Modules
         /// <inheritdoc />
         public void CacheComponent(Transform component)
         {
-            // We just need the transform, so there's nothing to cache.
+            _componentCache[component] = TransformEntry.Create(component);
         }
 
         /// <inheritdoc />
@@ -44,7 +44,8 @@ namespace HiddenAchievement.CrossguardUi.Modules
         public void Transition(Transform component, IStyleModuleRule rule)
         {
             if (rule is not LocalScaleModuleRule scaleRule) return;
-            StopTween();
+            TransformEntry entry = _componentCache[component];
+            entry.StopTween();
             component.localScale = new Vector3(scaleRule.Scale.x, scaleRule.Scale.y, 1);
         }
 
@@ -52,8 +53,9 @@ namespace HiddenAchievement.CrossguardUi.Modules
         public void Transition(Transform component, IStyleModuleRule rule, float duration, Ease easing)
         {
             if (rule is not LocalScaleModuleRule scaleRule) return;
-            StopTween();
-            _motionHandle = LMotion.Create(component.localScale, scaleRule.Scale, duration)
+            TransformEntry entry = _componentCache[component];
+            entry.StopTween();
+            entry.Tween = LMotion.Create(component.localScale, scaleRule.Scale, duration)
                 .WithEase(easing)
                 .BindToLocalScale(component);
         }
@@ -61,16 +63,11 @@ namespace HiddenAchievement.CrossguardUi.Modules
         /// <inheritdoc />
         public void Reset()
         {
-            StopTween();
-        }
-
-        private void StopTween()
-        {
-            if (_motionHandle != MotionHandle.None)
+            foreach (TransformEntry entry in _componentCache.Values)
             {
-                _motionHandle.TryCancel();
+                entry.Free();
             }
-            _motionHandle = MotionHandle.None;
+            _componentCache.Clear();
         }
         
         private LocalScaleModule()

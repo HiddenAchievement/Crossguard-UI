@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using LitMotion;
 using LitMotion.Extensions;
 using UnityEngine;
@@ -7,9 +8,8 @@ namespace HiddenAchievement.CrossguardUi.Modules
     public class PivotModule : IStyleModule
     {
         private static readonly CrossInstancePool<PivotModule> s_pool = new(() => new PivotModule());
-        
-        private MotionHandle _motionHandle = MotionHandle.None;
-        
+        private readonly Dictionary<Transform, RectTransformEntry> _componentCache = new();
+
         public static PivotModule Create()
         {
             return s_pool.Fetch();
@@ -24,7 +24,7 @@ namespace HiddenAchievement.CrossguardUi.Modules
         /// <inheritdoc />
         public void CacheComponent(Transform component)
         {
-            // We just need the transform, so there's nothing to cache.
+            _componentCache[component] = RectTransformEntry.Create(component);
         }
 
         /// <inheritdoc />
@@ -46,35 +46,30 @@ namespace HiddenAchievement.CrossguardUi.Modules
         public void Transition(Transform component, IStyleModuleRule rule)
         {
             if (rule is not PivotModuleRule pivotRule) return;
-            StopTween();
-            RectTransform rtComponent = (RectTransform)component;
-            rtComponent.pivot = pivotRule.Pivot;
+            RectTransformEntry entry = _componentCache[component];
+            entry.StopTween();
+            entry.Component.pivot = pivotRule.Pivot;
         }
 
         /// <inheritdoc />
         public void Transition(Transform component, IStyleModuleRule rule, float duration, Ease easing)
         {
             if (rule is not PivotModuleRule pivotRule) return;
-            StopTween();
-            RectTransform rtComponent = (RectTransform)component;
-            _motionHandle = LMotion.Create(rtComponent.pivot, pivotRule.Pivot, duration)
+            RectTransformEntry entry = _componentCache[component];
+            entry.StopTween();
+            entry.Tween = LMotion.Create(entry.Component.pivot, pivotRule.Pivot, duration)
                 .WithEase(easing)
-                .BindToPivot(rtComponent);
+                .BindToPivot(entry.Component);
         }
 
         /// <inheritdoc />
         public void Reset()
         {
-            StopTween();
-        }
-
-        private void StopTween()
-        {
-            if (_motionHandle != MotionHandle.None)
+            foreach (RectTransformEntry entry in _componentCache.Values)
             {
-                _motionHandle.TryCancel();
+                entry.Free();
             }
-            _motionHandle = MotionHandle.None;
+            _componentCache.Clear();
         }
         
         private PivotModule()

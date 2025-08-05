@@ -3,7 +3,7 @@ using System;
 namespace HiddenAchievement.CrossguardUi.Modules
 {
     [Serializable]
-    [StyleModuleRule("CanvasGroup/Alpha")]
+    [StyleModuleRule("CanvasGroup/Alpha (CanvasGroup)")]
     public class AlphaCanvasGroupModuleRule : IStyleModuleRule
     {
         public float Alpha;
