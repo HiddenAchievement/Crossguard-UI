@@ -1,4 +1,7 @@
-﻿using UnityEngine;
+﻿#if CROSS_REVAMP
+
+using System;
+using UnityEngine;
 using UnityEngine.UI;
 
 namespace HiddenAchievement.CrossguardUi
@@ -6,6 +9,7 @@ namespace HiddenAchievement.CrossguardUi
     /// <summary>
     /// A Toggle that swaps icons when you click on it.
     /// </summary>
+    [Obsolete("No longer necessary. Effect can be accomplished with the Checked state.", false)]
     public class CrossIconToggle : CrossToggleBase
     {
         [SerializeField]
@@ -52,3 +56,5 @@ namespace HiddenAchievement.CrossguardUi
         }
     }
 }
+
+#endif // CROSS_REVAMP

@@ -1,4 +1,6 @@
-﻿using System;
+﻿#if CROSS_REVAMP
+
+using System;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
@@ -214,3 +216,5 @@ namespace HiddenAchievement.CrossguardUi
         }
     }
 }
+
+#endif // CROSS_REVAMP

@@ -1,4 +1,7 @@
-﻿using System.Collections;
+﻿#if CROSS_REVAMP
+
+using System;
+using System.Collections;
 using UnityEngine;
 
 namespace HiddenAchievement.CrossguardUi
@@ -6,6 +9,7 @@ namespace HiddenAchievement.CrossguardUi
     /// <summary>
     /// A standard slide-toggle.
     /// </summary>
+    [Obsolete("No longer necessary. Effect can be accomplished with the Checked state.", false)]
     public class CrossSlideToggle : CrossToggleBase
     {
         [SerializeField]
@@ -68,3 +72,5 @@ namespace HiddenAchievement.CrossguardUi
         }
     }
 }
+
+#endif // CROSS_REVAMP

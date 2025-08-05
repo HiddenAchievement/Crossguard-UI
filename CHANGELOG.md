@@ -101,7 +101,7 @@ All notable end-user facing changes should be documented in this file.
 
 ## [1.1.2] 2025-07-07
 
-~~### Added
+### Added
 
 - Local Rotation Module
 - Image Fill Module

@@ -1,4 +1,6 @@
-﻿using System;
+﻿#if CROSS_REVAMP
+
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -15,7 +17,7 @@ namespace HiddenAchievement.CrossguardUi
     /// A Dropdown slightly customized to work with TweenTransitioner.
     /// </summary>
     [RequireComponent(typeof(RectTransform))]
-    public class CrossDropdown : CrossSelectable, IPointerClickHandler, ISubmitHandler, ICancelHandler
+    public class CrossRevampDropdown : CrossSelectable, IPointerClickHandler, ISubmitHandler, ICancelHandler
     {
         protected class CrossDropdownItem : MonoBehaviour, ICancelHandler, ISelectHandler
         {
@@ -26,15 +28,15 @@ namespace HiddenAchievement.CrossguardUi
             [SerializeField]
             private RectTransform _rectTransform;
             [SerializeField]
-            private CrossToggle _crossToggle;
+            private CrossRevampToggle _crossToggle;
 
             public TMP_Text Text { get => _text; set => _text = value; }
             public Image Image { get => _image; set => _image = value;
             }
             public RectTransform RectTransform { get => _rectTransform; set => _rectTransform = value; }
-            public CrossToggle Toggle { get => _crossToggle; set => _crossToggle = value; }
+            public CrossRevampToggle Toggle { get => _crossToggle; set => _crossToggle = value; }
             
-            public CrossDropdown Dropdown { get; set; }
+            public CrossRevampDropdown Dropdown { get; set; }
             
             public void OnCancel(BaseEventData eventData)
             {
@@ -166,7 +168,7 @@ namespace HiddenAchievement.CrossguardUi
         private Coroutine _fadeCoroutine;
         
         
-        protected CrossDropdown() {}
+        protected CrossRevampDropdown() {}
 
 #if UNITY_EDITOR
         protected override void Reset()
@@ -412,7 +414,7 @@ namespace HiddenAchievement.CrossguardUi
 
             GameObject templateGo = _template.gameObject;
             templateGo.SetActive(true);
-            CrossToggle itemCrossToggle = _template.GetComponentInChildren<CrossToggle>();
+            CrossRevampToggle itemCrossToggle = _template.GetComponentInChildren<CrossRevampToggle>();
 
             _validTemplate = true;
             if (!itemCrossToggle || itemCrossToggle.transform == Template)
@@ -581,7 +583,7 @@ namespace HiddenAchievement.CrossguardUi
 
             _items.Clear();
 
-            CrossToggle prev = null;
+            CrossRevampToggle prev = null;
             for (int i = 0; i < Options.Count; ++i)
             {
                 TMP_Dropdown.OptionData data = Options[i];
@@ -887,7 +889,7 @@ namespace HiddenAchievement.CrossguardUi
         }
 
         // Change the value and hide the dropdown.
-        private void OnSelectItem(CrossToggle crossToggle)
+        private void OnSelectItem(CrossRevampToggle crossToggle)
         {
             if (!crossToggle.IsOn)
                 crossToggle.IsOn = true;
@@ -913,3 +915,5 @@ namespace HiddenAchievement.CrossguardUi
         }
     }
 }
+
+#endif // CROSS_REVAMP

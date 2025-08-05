@@ -1,4 +1,7 @@
-﻿using TMPro;
+﻿#if CROSS_REVAMP
+
+using System;
+using TMPro;
 using UnityEngine;
 
 namespace HiddenAchievement.CrossguardUi
@@ -6,6 +9,7 @@ namespace HiddenAchievement.CrossguardUi
     /// <summary>
     /// A toggle which swaps text, based on on/off state.
     /// </summary>
+    [Obsolete("No longer necessary. Effect can be accomplished with the Checked state.", false)]
     public class CrossTextToggle : CrossToggleBase
     {
         [SerializeField]
@@ -52,3 +56,5 @@ namespace HiddenAchievement.CrossguardUi
         }
     }
 }
+
+#endif // CROSS_REVAMP

@@ -196,34 +196,39 @@ with Crossguard Transitioners.  It also supports some special behavior, when
 used as Increment/Decrement buttons for Axis Controls (which will be discussed
 below).
 
-### CrossToggle
+### CrossRevampToggle
 
-CrossToggle is **not** a child class of UGUI's Toggle.  It had to be rewritten
-to work with Crossguard's [Toggle Groups](#togglegroups).  Unlike
+CrossRevampToggle is **not** a child class of UGUI's Toggle.  It was rewritten
+to work with Crossguard's [Toggle Groups](#togglegroups). Unlike
 traditional Toggles, CrossToggles can be assigned an arbitrary ID, for internal
 use.  It also has an additional value changed callback that can be used when
 you want to know which toggle was fired.
 
-### CrossUguiToggle
+### CrossToggle
 
-This is a legacy UGUI toggle that is compatible with Crossguard features.
+CrossToggle is a child class of UGUI's Toggle that has had CrossRevampToggle's
+features shoe-horned in. It can be used as a drop-in replacement for UGUI's
+Toggle, but it is not as mature as CrossRevampToggle, and it could present
+slightly more jank.
 
 ### CrossSlider
 
 CrossSlider is a child class of UGUI's Slider.  It has been modified to work
 with Crossguard Transitioners, and it's also an [Axis Control](#axiscontrols).
 
+### CrossRevampDropdown
+
+CrossRevampDropdown is **not** a child of UGUI's Dropdown or `TMP_Dropdown`.  It has
+been rewritten to work with CrossToggle, CrossScrollbar and Crossguard
+Transitioners. It also fixes a selected item visibility bug that existed in
+`TMP_Dropdown`, when using keyboard or gamepad navigation.
+
 ### CrossDropdown
 
-CrossDropdown is **not** a child of UGUI's Dropdown or `TMP_Dropdown`.  It has
-been rewritten to work with CrossToggle, CrossScrollbar and Crossguard
-Transitioners.
-
-### CrossUguiDropdown
-
-CrossUguiDropdown is a child class of UGUI's `TMP_Dropdown`, which works with
-`CrossUguiToggle`, `CrossScrollbar` and Crossguard Transitioners, and attempts to
-fix the selected item visibility bug in `TMP_Dropdown`.
+CrossDropdown is a child class of UGUI's `TMP_Dropdown` that has had
+CrossRevampDropdown's features shoe-horned in. It can be used as a drop-in
+replacement for `TMP_Dropdown`, but it is not as mature as `CrossRevampDropdown`,
+and it could present slightly more jank.
 
 ### CrossInputField
 
@@ -247,6 +252,10 @@ These are frequently-used elements that have been added to the collection.
 
 ### CrossSlideToggle
 
+!!! WARNING
+    **Deprecated**: This class has been deprecated. You can use the Checked state
+    with a Modular Transitioner to accomplish most toggle styles.
+
 ![](images/slide_toggle.png)
 
 This is a standard slide-toggle, which slides a handle to the left or right,
@@ -254,11 +263,19 @@ depending on whether the Toggle is off or on, respectively.
 
 ### CrossIconToggle
 
+!!! WARNING
+    **Deprecated**: This class has been deprecated. You can use the Checked state
+    with a Modular Transitioner to accomplish most toggle styles.
+
 ![](images/icon_toggle.png)
 
 This toggle displays different images when it is on and off.
 
 ### CrossTextToggle
+
+!!! WARNING
+    **Deprecated**: This class has been deprecated. You can use the Checked state
+    with a Modular Transitioner to accomplish most toggle styles.
 
 This toggle displays different text when it is on and off.
 

@@ -75,11 +75,6 @@ namespace HiddenAchievement.CrossguardUi
             if (_transitioner != null) return;
             Debug.LogWarning($"{name} needs a Transitioner component added.");
         }
-        
-        protected override void Start()
-        {
-            base.Start();
-        }
 
         protected override void OnEnable()
         {

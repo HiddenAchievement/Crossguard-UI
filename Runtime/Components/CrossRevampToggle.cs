@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿#if CROSS_REVAMP
+
+using UnityEngine;
 using UnityEngine.UI;
 
 namespace HiddenAchievement.CrossguardUi
@@ -6,7 +8,7 @@ namespace HiddenAchievement.CrossguardUi
     /// <summary>
     /// A Toggle slightly customized to work with TweenTransitioner.
     /// </summary>
-    public class CrossToggle : CrossToggleBase
+    public class CrossRevampToggle : CrossToggleBase
 	{
         /// <summary>
         /// Display settings for when a toggle is activated or deactivated.
@@ -68,3 +70,5 @@ namespace HiddenAchievement.CrossguardUi
         }
     }
 }
+
+#endif // CROSS_REVAMP

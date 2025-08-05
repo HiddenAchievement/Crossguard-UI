@@ -32,60 +32,41 @@ namespace HiddenAchievement.CrossguardUi
             PlaceUIElementRoot(go, menuCommand);
         }
 
-        [MenuItem("GameObject/UI/Crossguard UI/Toggle - Standard", false, 1100)]
+#if CROSS_REVAMP
+        [MenuItem("GameObject/UI/Crossguard UI/Toggle (Revamp)", false, 1100)]
         public static void AddToggle(MenuCommand menuCommand)
         {
-            GameObject go = CrossDefaultControls.CreateToggle(GetStandardResources());
+            GameObject go = CrossDefaultControls.CreateRevampToggle(GetStandardResources());
             PlaceUIElementRoot(go, menuCommand);            
         }
-        
-        [MenuItem("GameObject/UI/Crossguard UI/Toggle - Slide", false, 1101)]
-        public static void AddSlideToggle(MenuCommand menuCommand)
-        {
-            GameObject go = CrossDefaultControls.CreateSlideToggle(GetStandardResources());
-            PlaceUIElementRoot(go, menuCommand);
-        }
-        
-        [MenuItem("GameObject/UI/Crossguard UI/Toggle - Icon", false, 1102)]
-        public static void AddIconToggle(MenuCommand menuCommand)
-        {
-            GameObject go = CrossDefaultControls.CreateIconToggle(GetStandardResources());
-            PlaceUIElementRoot(go, menuCommand);
-        }
+#endif // CROSS_REVAMP
 
-        [MenuItem("GameObject/UI/Crossguard UI/Toggle - Text", false, 1103)]
-        public static void AddTextToggle(MenuCommand menuCommand)
-        {
-            GameObject go = CrossDefaultControls.CreateTextToggle(GetStandardResources());
-            PlaceUIElementRoot(go, menuCommand);
-        }
-
-        [MenuItem("GameObject/UI/Crossguard UI/Toggle - UGUI", false, 1104)]
+        [MenuItem("GameObject/UI/Crossguard UI/Toggle", false, 1104)]
         public static void AddUguiToggle(MenuCommand menuCommand)
         {
             GameObject go = CrossDefaultControls.CreateUguiToggle(GetStandardResources());
             PlaceUIElementRoot(go, menuCommand);
         }
+
+        [MenuItem("GameObject/UI/Crossguard UI/Spinner - Text", false, 1200)]
+        public static void AddTextSpinner(MenuCommand menuCommand)
+        {
+            GameObject go = CrossDefaultControls.CreateTextSpinner(GetStandardResources());
+            PlaceUIElementRoot(go, menuCommand);
+        }
         
-        [MenuItem("GameObject/UI/Crossguard UI/Spinner - Icon", false, 1200)]
+        [MenuItem("GameObject/UI/Crossguard UI/Spinner - Icon", false, 1201)]
         public static void AddIconSpinner(MenuCommand menuCommand)
         {
             GameObject go = CrossDefaultControls.CreateIconSpinner(GetStandardResources());
             PlaceUIElementRoot(go, menuCommand);           
         }
         
-        [MenuItem("GameObject/UI/Crossguard UI/Spinner - Number", false, 1201)]
+        [MenuItem("GameObject/UI/Crossguard UI/Spinner - Number", false, 1202)]
         public static void AddNumberSpinner(MenuCommand menuCommand)
         {
             GameObject go = CrossDefaultControls.CreateNumberSpinner(GetStandardResources());
             PlaceUIElementRoot(go, menuCommand);           
-        }
-        
-        [MenuItem("GameObject/UI/Crossguard UI/Spinner - Text", false, 1203)]
-        public static void AddTextSpinner(MenuCommand menuCommand)
-        {
-            GameObject go = CrossDefaultControls.CreateTextSpinner(GetStandardResources());
-            PlaceUIElementRoot(go, menuCommand);            
         }
         
         [MenuItem("GameObject/UI/Crossguard UI/Slider", false, 1300)]
@@ -101,15 +82,16 @@ namespace HiddenAchievement.CrossguardUi
             GameObject go = CrossDefaultControls.CreateInputField(GetStandardResources());
             PlaceUIElementRoot(go, menuCommand);     
         }
-
-        [MenuItem("GameObject/UI/Crossguard UI/Dropdown", false, 1301)]
+#if CROSS_REVAMP
+        [MenuItem("GameObject/UI/Crossguard UI/Dropdown (Revamp)", false, 1301)]
         public static void AddDropdown(MenuCommand menuCommand)
         {
-            GameObject go = CrossDefaultControls.CreateDropdown(GetStandardResources());
+            GameObject go = CrossDefaultControls.CreateRevampDropdown(GetStandardResources());
             PlaceUIElementRoot(go, menuCommand);              
         }
-        
-        [MenuItem("GameObject/UI/Crossguard UI/UGUI Dropdown", false, 1301)]
+#endif // CROSS_REVAMP
+
+        [MenuItem("GameObject/UI/Crossguard UI/Dropdown", false, 1301)]
         public static void AddUguiDropdown(MenuCommand menuCommand)
         {
             GameObject go = CrossDefaultControls.CreateUguiDropdown(GetStandardResources());
@@ -129,11 +111,6 @@ namespace HiddenAchievement.CrossguardUi
             GameObject go = CrossDefaultControls.CreateScrollbar(GetStandardResources());
             PlaceUIElementRoot(go, menuCommand);       
         }
-        
-        
-        
-        
-        
         
         private const string kUILayerName = "UI";
         
