@@ -2,6 +2,17 @@
 
 All notable end-user facing changes should be documented in this file.
 
+## [1.2.2] 2025-08-05
+
+### Fixed
+
+- Fixed a couple of editor-time warnings where the Pivot and Anchor modules were triggering a
+  `RectTransformDimensionsChanged` during Awake.
+
+### Changed
+
+- Created a property to expose (readonly) the transition time for OmniTransitioner.
+
 ## [1.2.1] 2025-08-05
 
 ### Fixed

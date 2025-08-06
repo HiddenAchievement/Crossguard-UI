@@ -10,6 +10,7 @@ namespace HiddenAchievement.CrossguardUi
         [SerializeField]
         [Tooltip("Time in seconds the transitions will occur over.")]
         private float _transitionTime = 0.25f;
+        public float TransitionTime => _transitionTime;
 
         [SerializeField]
         [Tooltip("Whether states should be treated as mutually exclusive.")]

@@ -38,9 +38,10 @@ namespace HiddenAchievement.CrossguardUi.Modules
         /// <inheritdoc />
         public void ForceComponentRule(Transform component, IStyleModuleRule rule)
         {
-            if (rule is not AnchorMinModuleRule anchorMinRule) return;
-            RectTransform rtComponent = (RectTransform)component;
-            rtComponent.anchorMin = anchorMinRule.AnchorMin;
+            // We can't do this because it triggers RectTransformDimensionsChange, which is not allowed in Awake.
+            // if (rule is not AnchorMinModuleRule anchorMinRule) return;
+            // RectTransform rtComponent = (RectTransform)component;
+            // rtComponent.anchorMin = anchorMinRule.AnchorMin;
         }
 
         /// <inheritdoc />
