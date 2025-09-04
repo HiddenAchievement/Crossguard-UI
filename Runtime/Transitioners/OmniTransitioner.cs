@@ -15,6 +15,10 @@ namespace HiddenAchievement.CrossguardUi
         [SerializeField]
         [Tooltip("Whether states should be treated as mutually exclusive.")]
         private bool _mutuallyExclusive = true;
+
+        [SerializeField]
+        [Tooltip("Turn this on if you want the transitioner to reset to state 0 when enabled.")]
+        private bool _resetOnEnable;
         
         private BitArray _stateFlags;
         private OmniTransitionerState[] _states;
@@ -37,7 +41,10 @@ namespace HiddenAchievement.CrossguardUi
         private void OnEnable()
         {
             Initialize();
-            ResetState();
+            if (_resetOnEnable)
+            {
+                ResetState();
+            }
         }
         
         private void OnDestroy()

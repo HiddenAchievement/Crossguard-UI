@@ -2,6 +2,14 @@
 
 All notable end-user facing changes should be documented in this file.
 
+
+## [1.2.3] 2025-09-01
+
+### Fixed
+
+- The reset in OnEnable in `OmniTransitioner` is now optional, and defaults to off. You can restore the old behavior by
+  turning the "Reset on Enable" flag back on, on the component.
+
 ## [1.2.2] 2025-08-05
 
 ### Fixed
