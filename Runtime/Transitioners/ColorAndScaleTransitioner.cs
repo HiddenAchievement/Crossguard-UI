@@ -27,7 +27,10 @@ namespace HiddenAchievement.CrossguardUi
             public readonly Color?[] Colors = new Color?[(int)InteractState.Count];
             public readonly float?[] Alphas = new float?[(int)InteractState.Count];
             public readonly Vector2?[] Scales = new Vector2?[(int)InteractState.Count];
-            public readonly List<MotionHandle> TweenHandles = new();
+            public MotionHandle ColorTweenHandle;
+            public MotionHandle AlphaTweenHandle;
+            public MotionHandle ColorAndAlphaTweenHandle;
+            public MotionHandle ScaleTweenHandle;
         }
 
         [SerializeField]
@@ -81,13 +84,13 @@ namespace HiddenAchievement.CrossguardUi
         {
             if (appearance == null) return;
 
-            if (_stateComponents[(int) state] == null)
+            if (_stateComponents[(int)state] == null)
             {
                 _stateComponents[(int)state] = new List<ComponentInfo>(appearance.Length);
             }
             else
             {
-                _stateComponents[(int) state].Clear();
+                _stateComponents[(int)state].Clear();
             }
 
             for (int i = 0; i < appearance.Length; i++)
@@ -288,7 +291,9 @@ namespace HiddenAchievement.CrossguardUi
             }
 #endif
 
-            KillTweens(info);
+            info.ColorTweenHandle.TryCancel();
+            info.AlphaTweenHandle.TryCancel();
+            info.ColorAndAlphaTweenHandle.TryCancel();
             
             color.a = alpha;
 
@@ -298,9 +303,9 @@ namespace HiddenAchievement.CrossguardUi
             }
             else
             {
-                info.TweenHandles.Add(LMotion.Create(info.Renderer.GetColor(), color, _style.TransitionTime)
+                info.ColorAndAlphaTweenHandle = LMotion.Create(info.Renderer.GetColor(), color, _style.TransitionTime)
                     .BindToColor(info.Renderer)
-                    .AddTo(info.Renderer.gameObject));
+                    .AddTo(info.Renderer.gameObject);
             }
         }
 
@@ -315,8 +320,9 @@ namespace HiddenAchievement.CrossguardUi
                 return;
             }
 #endif
-
-            KillTweens(info);
+            
+            info.ColorTweenHandle.TryCancel();
+            info.ColorAndAlphaTweenHandle.TryCancel();
 
             if (immediate)
             {
@@ -325,9 +331,9 @@ namespace HiddenAchievement.CrossguardUi
             }
             else
             {
-                info.TweenHandles.Add(LMotion.Create(info.Renderer.GetColor(), color, _style.TransitionTime)
+                info.ColorTweenHandle = LMotion.Create(info.Renderer.GetColor(), color, _style.TransitionTime)
                     .BindToColorNoAlpha(info.Renderer)
-                    .AddTo(info.Renderer.gameObject));
+                    .AddTo(info.Renderer.gameObject);
             }
         }
 
@@ -342,8 +348,9 @@ namespace HiddenAchievement.CrossguardUi
                 return;
             }
 #endif
-
-            KillTweens(info);
+            
+            info.AlphaTweenHandle.TryCancel();
+            info.ColorAndAlphaTweenHandle.TryCancel();
 
             if (immediate)
             {
@@ -354,9 +361,9 @@ namespace HiddenAchievement.CrossguardUi
             }
             else
             {
-                info.TweenHandles.Add(LMotion.Create(info.Renderer.GetColor().a, alpha, _style.TransitionTime)
+                info.AlphaTweenHandle = LMotion.Create(info.Renderer.GetColor().a, alpha, _style.TransitionTime)
                     .BindToColorA(info.Renderer)
-                    .AddTo(info.Renderer.gameObject));
+                    .AddTo(info.Renderer.gameObject);
             }
         }
 
@@ -364,7 +371,7 @@ namespace HiddenAchievement.CrossguardUi
         {
             // Debug.Log("<color=orange>SetComponentScale " + info.Component.name + " scale: " + scale + " immediate: " + immediate + "</color>");
 
-            KillTweens(info);
+            info.ScaleTweenHandle.TryCancel();
 
             if (immediate)
             {
@@ -372,9 +379,9 @@ namespace HiddenAchievement.CrossguardUi
             }
             else
             {
-                info.TweenHandles.Add(LMotion.Create((Vector2)info.Component.localScale, scale, _style.TransitionTime)
+                info.ScaleTweenHandle = LMotion.Create((Vector2)info.Component.localScale, scale, _style.TransitionTime)
                     .BindToLocalScaleXY(info.Component)
-                    .AddTo(info.Component.gameObject));
+                    .AddTo(info.Component.gameObject);
             }
         }
         
@@ -478,15 +485,6 @@ namespace HiddenAchievement.CrossguardUi
                     component.transform.localScale = appearance.Scale;
                 }
             }
-        }
-
-        private void KillTweens(ComponentInfo info)
-        {
-            for (int i = 0; i < info.TweenHandles.Count; i++)
-            {
-                info.TweenHandles[i].TryCancel();
-            }
-            info.TweenHandles.Clear();
         }
     }
 }
