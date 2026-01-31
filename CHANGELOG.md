@@ -2,13 +2,18 @@
 
 All notable end-user facing changes should be documented in this file.
 
+## [1.2.5] 2026-01-30
+
+### Changed
+
+* Added `!UNITY_SERVER` to the constraints on the ASMDEF, so that servers will not try to include this package.
+
 ## [1.2.4] 2026-01-06
 
 ### Fixed
 
 - There was a small bug in `ColorAndScaleTranstioner` where it was incorrectly canceling color/alpha tweens immediately
-  when there was a scale transition starting at the same time. This is now fixed. 
-
+  when there was a scale transition starting at the same time. This is now fixed.
 
 ## [1.2.3] 2025-09-01
 
