@@ -482,7 +482,7 @@ namespace HiddenAchievement.CrossguardUi
                 }
                 if (appearance.UseScale)
                 {
-                    component.transform.localScale = appearance.Scale;
+                    component.transform.localScale = (Vector3)appearance.Scale + Vector3.forward;
                 }
             }
         }

@@ -2,6 +2,13 @@
 
 All notable end-user facing changes should be documented in this file.
 
+## [1.2.6] 2026-05-11
+
+### Fixed
+
+- Fixed a bug which could sometimes cause Z-scale of elements to drop to zero when using scaling in a
+  `ColorAndScaleTransitioner`, which could cause some UI elements to beinvisible.
+
 ## [1.2.5] 2026-01-30
 
 ### Changed
