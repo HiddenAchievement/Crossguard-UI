@@ -2,6 +2,12 @@
 
 All notable end-user facing changes should be documented in this file.
 
+## [1.2.7] 2026-06-25
+
+### Changed
+
+- Changed `!UNITY_SERVER` ASMDEF constraint to `!UNITY_SERVER || UNITY_EDITOR` to fix server build errors.
+
 ## [1.2.6] 2026-05-11
 
 ### Fixed
