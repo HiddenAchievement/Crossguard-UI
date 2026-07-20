@@ -2,6 +2,13 @@
 
 All notable end-user facing changes should be documented in this file.
 
+## [1.2.8] 2026-07-20
+
+### Changed
+
+- Added a stub inspector editor for `OmniTransitionerState`, so that the `ModularStyleEntryDrawer` PropertyDrawer
+  works in environemtns where the default inspector is forced into an IMGUI context.
+
 ## [1.2.7] 2026-06-25
 
 ### Changed
