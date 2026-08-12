@@ -34,8 +34,7 @@ namespace HiddenAchievement.CrossguardUi
         
         protected override void DoStateTransition(SelectionState state, bool instant)
         {
-            base.DoStateTransition(state, instant);
-            
+            // We don't call the base DoStateTransition here because it's just doing cosmetic things we don't need.
             if (_transitioner == null)
             { 
                 _transitioner = GetComponent<ITransitioner>();

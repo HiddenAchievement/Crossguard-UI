@@ -30,7 +30,12 @@ namespace HiddenAchievement.CrossguardUi.Modules
         /// <inheritdoc />
         public void ClearComponent(Transform component)
         {
-            component.GetComponent<CanvasGroup>().alpha = 1f;
+            if (Application.isPlaying)
+            {
+                // Unfortunately, we can't change CanvasGroup alpha when not playing, because it calls SendMessage internally.
+                // TODO: Possibly use EditorApplication.delayCall to execute this change safely.
+                component.GetComponent<CanvasGroup>().alpha = 1f;
+            }
         }
 
         /// <inheritdoc />

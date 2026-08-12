@@ -2,6 +2,20 @@
 
 All notable end-user facing changes should be documented in this file.
 
+## [1.2.9] 2026-08-12
+
+### Fixed
+
+- `AlphaCanvasGroupModule` - Disabled alpha changes in `ClearComponent` if not in Play mode, because Unity uses
+  `SendMessaage` internally to change CanvasGroup children, and that can't be run during `OnValidate`. This will
+  unfortuantely mean that those changes are not immediately visible in editor, until we can devise a workaround.
+
+### Changed
+
+- No longer calling the base `DoStateTransition` on several components, because this does nothing but make cosmetic
+  changes, and we're not using Unity's transition cosmetics, so it was just wasting time.
+
+
 ## [1.2.8] 2026-07-20
 
 ### Changed
