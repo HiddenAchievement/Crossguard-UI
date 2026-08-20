@@ -2,6 +2,20 @@
 
 All notable end-user facing changes should be documented in this file.
 
+## [1.2.10] 2026-08-18
+
+### Fixed
+
+- Fixed a variety of bugs in `CrossToggle` and `CrossToggleGroup`. They just weren't sufficiently mature, and needed
+  some exercise.
+
+### Added
+
+- Conceptually, because it's a more top-down, one-stop-shopping concept of a ToggleGroup, the CrossRadioGroup really
+  should have had a way to set the selected toggle from the group level. In light of this, the `Id` property now
+  includes a setter.
+
+
 ## [1.2.9] 2026-08-12
 
 ### Fixed

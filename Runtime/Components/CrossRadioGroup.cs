@@ -32,18 +32,39 @@ namespace HiddenAchievement.CrossguardUi
         public RadioGroupEvent OnValueChanged;
 
         /// <summary>
-        /// The ID of the selected toggle.  (Negative values mean none is selected.)
+        /// The ID of the selected toggle. (Negative values mean none is selected.)
         /// </summary>
-        public int Id => SelectedToggle == null ? NoSelection : SelectedToggle.Id;
+        public int Id
+        {
+            get => _selectedId;
+            set
+            {
+                _selectedId = value;
+                for (int i = 0; i < _toggles.Count; i++)
+                {
+                    ICrossToggle toggle = _toggles[i];
+                    if (toggle.Id == value && !toggle.IsOn)
+                    {
+                        toggle.IsOn = true;
+                    }
+                }
+            }
+        }
 
         public ICrossToggle SelectedToggle { get; private set; } = null;
         
         public bool HasSelectedToggle => SelectedToggle != null;
 
         private bool _suppressNotifyOff = false;
+        private int _selectedId = NoSelection;
 
         protected CrossRadioGroup() { }
 
+        protected override void OnDisable()
+        {
+            _selectedId = NoSelection;
+        }
+        
         /// <summary>
         /// Notify the group that the given toggle is enabled.
         /// </summary>
@@ -105,6 +126,15 @@ namespace HiddenAchievement.CrossguardUi
             {
                 _toggles.Sort((t1, t2) => t1.Id.CompareTo(t2.Id));
                 _toggles[0].IsOn = true;
+            }
+        }
+
+        public override void RegisterToggle(ICrossToggle toggle)
+        {
+            base.RegisterToggle(toggle);
+            if (toggle.Id == _selectedId)
+            {
+                toggle.SetIsOnImmediate(true);
             }
         }
 

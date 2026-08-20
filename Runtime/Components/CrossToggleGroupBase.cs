@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEngine;
 using UnityEngine.EventSystems;
 
 namespace HiddenAchievement.CrossguardUi
@@ -28,6 +27,12 @@ namespace HiddenAchievement.CrossguardUi
         {
             EnsureValidState();
             base.Start();
+        }
+        
+        protected override void OnEnable()
+        {
+            EnsureValidState();
+            base.OnEnable();
         }
         
         protected virtual void ValidateToggleIsInGroup(ICrossToggle toggle)

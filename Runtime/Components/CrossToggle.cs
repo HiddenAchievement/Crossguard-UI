@@ -41,12 +41,7 @@ namespace HiddenAchievement.CrossguardUi
         public bool IsOn
         {
             get => isOn;
-            set
-            {
-                isOn = true;
-                UpdateCheckedFlag(false);
-                OnValueChangedForId?.Invoke(_id, value);
-            }
+            set => Set(value);
         }
         
         public ToggleIdEvent OnValueChangedForId = new();
@@ -104,6 +99,76 @@ namespace HiddenAchievement.CrossguardUi
             base.OnSelect(eventData);
             OnNavSelected?.Invoke(_id);
         }
+
+        public override void OnPointerClick(PointerEventData eventData)
+        {
+            if (eventData.button != PointerEventData.InputButton.Left)
+                return;
+
+            InternalToggle();
+        }
+
+        public override void OnSubmit(BaseEventData eventData)
+        {
+            InternalToggle();
+        }
+
+        private void InternalToggle()
+        {
+            IsOn = !IsOn;
+        }
+
+        private void Set(bool value, bool sendCallback = true, bool immediate = false)
+        {
+            if (value == isOn) return;
+
+            if (_crossGroup != null)
+            {
+                if (!value && !_crossGroup.AllowSwitchOff && !_crossGroup.AnyTogglesOn())
+                {
+                    // Nope.
+                    isOn = true;
+                    return;
+                }
+            }
+
+            if (sendCallback)
+            {
+                isOn = value;
+            }
+            else
+            {
+                base.SetIsOnWithoutNotify(value);
+            }
+            
+            if (_crossGroup != null && IsActive())
+            {
+                if (value)
+                {
+                    _crossGroup.NotifyToggleOn(this, sendCallback);
+                }
+                else
+                {
+                    _crossGroup.NotifyToggleOff(this, sendCallback);
+                }
+            }
+            
+            UpdateCheckedFlag(immediate);
+            if (sendCallback)
+            {
+                OnValueChangedForId?.Invoke(_id, value);
+            }
+        }
+
+        public new void SetIsOnWithoutNotify(bool value)
+        {
+            Set(value, false);
+        }
+
+        public void SetIsOnImmediate(bool value)
+        {
+            Set(value, true, true);
+        }
         
         private void SetCrossToggleGroup(CrossToggleGroupBase newGroup, bool setMemberValue)
         {
@@ -122,7 +187,7 @@ namespace HiddenAchievement.CrossguardUi
                 newGroup.RegisterToggle(this);
 
             // If we are in a new group, and this toggle is on, notify group.
-            // Note: Don't refer to m_Group here as it's not guaranteed to have been set.
+            // Note: Don't refer to _crossGroup here as it's not guaranteed to have been set.
             if (newGroup != null && isOn && IsActive())
                 newGroup.NotifyToggleOn(this, false);
         }
@@ -134,9 +199,7 @@ namespace HiddenAchievement.CrossguardUi
         
         private void UpdateCheckedFlag(bool immediate)
         {
-#if UNITY_EDITOR
-            if (!Application.isPlaying && _transitioner == null) return;
-#endif
+            if (_transitioner == null) return;
             if (isOn)
             {
                 _transitioner.SetStateFlag(InteractState.Checked, immediate);
@@ -147,7 +210,7 @@ namespace HiddenAchievement.CrossguardUi
             }
         }
         
-        private void PlayEffect(bool instant)
+        private void PlayEffect(bool instant) 
         {
             if (graphic == null)
                 return;

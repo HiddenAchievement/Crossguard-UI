@@ -5,5 +5,6 @@ namespace HiddenAchievement.CrossguardUi
         bool IsOn { get; set; }
         int Id {  get; set; }
         void SetIsOnWithoutNotify(bool value);
+        void SetIsOnImmediate(bool value);
     }
 }

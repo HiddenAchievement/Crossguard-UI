@@ -107,7 +107,12 @@ namespace HiddenAchievement.CrossguardUi
             Set(value, false);
         }
         
-        protected virtual void Set(bool value, bool sendCallback = true)
+        public void SetIsOnImmediate(bool value)
+        {
+            Set(value, true, true);
+        }
+        
+        protected virtual void Set(bool value, bool sendCallback = true, bool immediate = false)
         {
             if (_isOn == value)
                 return;
@@ -140,7 +145,7 @@ namespace HiddenAchievement.CrossguardUi
             // due to already active toggle in a toggle group being clicked.
             // Controls like Dropdown rely on this.
             // It's up to the user to ignore a selection being set to the same value it already was, if desired.
-            UpdateAppearance(false);
+            UpdateAppearance(immediate);
             if (sendCallback)
             {
                 UISystemProfilerApi.AddMarker("CrossSlideToggle.value", this);
@@ -201,9 +206,7 @@ namespace HiddenAchievement.CrossguardUi
 
         private void UpdateAppearance(bool immediate)
         {
-#if UNITY_EDITOR
-            if (!Application.isPlaying && _transitioner == null) return;
-#endif
+            if (_transitioner == null) return;
             PlayEffect(immediate);
             if (_isOn)
             {
