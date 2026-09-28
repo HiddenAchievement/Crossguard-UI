@@ -2,6 +2,17 @@
 
 All notable end-user facing changes should be documented in this file.
 
+## [1.2.11] 2026-09-28
+
+### Fixed
+
+- Fixed an issue where a `CrossToggle` could be turned off when the group's `AllowSwitchOff` setting should have
+  prevented it.
+
+### Changed
+
+- Updated for Unity 6.3.
+
 ## [1.2.10] 2026-08-18
 
 ### Fixed

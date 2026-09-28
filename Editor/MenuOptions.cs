@@ -367,7 +367,7 @@ namespace HiddenAchievement.CrossguardUi
 
         private static void CreateEventSystem(bool select, GameObject parent)
         {
-            var esys = UnityEngine.Object.FindObjectOfType<EventSystem>();
+            var esys = UnityEngine.Object.FindFirstObjectByType<EventSystem>();
             if (esys == null)
             {
                 var eventSystem = new GameObject("EventSystem");

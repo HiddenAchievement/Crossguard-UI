@@ -694,20 +694,20 @@ namespace HiddenAchievement.CrossguardUi
             textAreaRectTransform.offsetMax = new Vector2(-8, -7);
 
             TextMeshProUGUI text = childText.AddComponent<TextMeshProUGUI>();
-            text.text               = "";
-            text.enableWordWrapping = false;
-            text.extraPadding       = true;
-            text.richText           = true;
+            text.text              = "";
+            text.textWrappingMode  = TextWrappingModes.NoWrap;
+            text.extraPadding      = true;
+            text.richText          = true;
             SetDefaultTextValues(text);
             text.margin = new Vector4(2, 0, 0, 2); // To keep italics within the mask.
 
             TextMeshProUGUI placeholder = childPlaceholder.AddComponent<TextMeshProUGUI>();
-            placeholder.text               = "Enter text...";
-            placeholder.fontSize           = 14;
-            placeholder.fontStyle          = FontStyles.Italic;
-            placeholder.enableWordWrapping = false;
-            placeholder.extraPadding       = true;
-            placeholder.margin             = new Vector4(2, 0, 0, 2); // To keep italics within the mask.
+            placeholder.text         = "Enter text...";
+            placeholder.fontSize     = 14;
+            placeholder.fontStyle    = FontStyles.Italic;
+            text.textWrappingMode    = TextWrappingModes.NoWrap;
+            placeholder.extraPadding = true;
+            placeholder.margin       = new Vector4(2, 0, 0, 2); // To keep italics within the mask.
 
             // Make placeholder color half as opaque as normal text color.
             Color placeholderColor = text.color;

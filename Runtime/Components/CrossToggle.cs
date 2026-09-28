@@ -122,12 +122,14 @@ namespace HiddenAchievement.CrossguardUi
         {
             if (value == isOn) return;
 
-            if (_crossGroup != null)
+            isOn = value;
+            if (_crossGroup != null && _crossGroup.isActiveAndEnabled && IsActive())
             {
                 if (!value && !_crossGroup.AllowSwitchOff && !_crossGroup.AnyTogglesOn())
                 {
                     // Nope.
                     isOn = true;
+                    _crossGroup.NotifyToggleOn(this, sendCallback);
                     return;
                 }
             }
